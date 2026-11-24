@@ -1,0 +1,25 @@
+HƯỚNG DẪN ĐỌC KẾT QUẢ MÔ HÌNH, QUY ĐỔI ĐIỂM VÀ XỬ LÝ DỮ LIỆU THIẾU (EDUWARN AI)
+
+1. BẢNG QUY ĐỔI ĐIỂM SỐ (THANG 20 BỒ ĐÀO NHA <-> THANG 10 & THANG 4 VIỆT NAM)
+Bộ dữ liệu UCI gốc sử dụng thang điểm 20 cho kết quả học tập đại học và thang điểm 200 cho điểm tuyển sinh. Khi áp dụng cho sinh viên Việt Nam, Cố vấn học tập quy đổi theo bảng chuẩn sau:
+- Loại Xuất sắc (A / 3.6 - 4.0 thang 4 / 8.5 - 10.0 thang 10): Tương đương 17.0 - 20.0 trên thang 20.
+- Loại Giỏi (B+ / 3.2 - 3.59 thang 4 / 8.0 - 8.4 thang 10): Tương đương 16.0 - 16.9 trên thang 20 (hoặc >= 14.0/20 theo chuẩn học bổng khuyến khích trong quy chế).
+- Loại Khá (B / 2.5 - 3.19 thang 4 / 7.0 - 7.9 thang 10): Tương đương 14.0 - 15.9 trên thang 20.
+- Loại Trung bình khá (C+ / 2.0 - 2.49 thang 4 / 6.0 - 6.9 thang 10): Tương đương 12.0 - 13.9 trên thang 20.
+- Loại Trung bình đạt chuẩn (C / 1.5 - 1.99 thang 4 / 5.0 - 5.9 thang 10): Tương đương 10.0 - 11.9 trên thang 20.
+- Loại Yếu / Không đạt (D, F / Dưới 1.0 - 1.49 thang 4 / Dưới 5.0 thang 10): Dưới 10.0 trên thang 20 — đây là ngưỡng cảnh báo học vụ Mức 1.
+- Công thức quy đổi nhanh: Điểm thang 20 = Điểm thang 10 x 2 = Điểm thang 4 x 5.
+
+2. CÁCH ĐỌC VÀ DIỄN GIẢI XÁC SUẤT DỰ ĐOÁN CỦA MÔ HÌNH
+Hệ thống EduWarn AI xuất đồng thời 3 xác suất: Dropout (Bỏ học), Enrolled (Đang theo học) và Graduate (Tốt nghiệp):
+- Trường hợp 1 – Xác suất Dropout dẫn đầu hoặc >= 40%: Hồ sơ thuộc diện cảnh báo ưu tiên cao. Cố vấn học tập cần liên hệ trao đổi riêng trong vòng 5–7 ngày để rà soát môn nợ, tình trạng học phí và hoàn cảnh cá nhân.
+- Trường hợp 2 – Xác suất Enrolled dẫn đầu: Sinh viên vẫn đang duy trì việc học nhưng tiến độ tích lũy chưa thực sự an toàn để tốt nghiệp đúng hạn. Cần lập kế hoạch trả nợ môn và theo dõi sát giữa kỳ.
+- Trường hợp 3 – Xác suất Graduate dẫn đầu (> 60%): Tín hiệu tích cực, sinh viên thích nghi tốt sau Học kỳ 1. Cố vấn nên khích lệ, định hướng nghiên cứu khoa học hoặc xét học bổng.
+- Trường hợp 4 – Kết quả sát nút (chênh lệch giữa 2 lớp dẫn đầu < 10%): Ví dụ Dropout 42% và Enrolled 39%. Đây là hồ sơ vùng ranh giới, mô hình không khẳng định tuyệt đối mà khuyến nghị Cố vấn học tập đối chiếu thêm điểm chuyên cần và trao đổi trực tiếp.
+
+3. CƠ CHẾ XỬ LÝ KHI NGƯỜI DÙNG CHỌN "KHÔNG BIẾT / CHƯA RÕ"
+Trong biểu mẫu Dự đoán cá nhân và file Excel Dự đoán hàng loạt, nếu Cố vấn học tập chưa có đủ toàn bộ 30 thông tin (ví dụ không rõ học vấn/nghề nghiệp cha mẹ hoặc điểm THPT), người dùng có thể chọn "Không biết / Chưa rõ" hoặc để trống ô dữ liệu:
+- Pipeline ColumnTransformer của mô hình đã tích hợp sẵn SimpleImputer:
+  + Nhánh biến phân loại (23 cột): Tự động điền khuyết bằng giá trị phổ biến nhất (strategy='most_frequent').
+  + Nhánh biến số liên tục (7 cột): Tự động điền khuyết bằng giá trị trung vị (strategy='median') để không bị lệch bởi giá trị ngoại lai.
+- Tuy nhiên, để dự đoán đạt độ tin cậy cao nhất, cần nhập chính xác 4 thông tin cốt lõi: Số môn đăng ký HK1, Số môn đạt HK1, Điểm trung bình HK1 và Tình trạng đóng học phí.

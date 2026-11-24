@@ -1,0 +1,33 @@
+ĐIỂM RÈN LUYỆN, HOẠT ĐỘNG SINH VIÊN, NGHIÊN CỨU KHOA HỌC VÀ THỰC TẬP TỐT NGHIỆP
+
+1. CÁCH TÍNH VÀ XẾP LOẠI ĐIỂM RÈN LUYỆN (DRL)
+Điểm rèn luyện được đánh giá theo từng học kỳ trên thang điểm 100 (theo Thông tư 16/2015/TT-BGDĐT), gồm 5 nhóm tiêu chí:
+- Ý thức tham gia học tập (tối đa 20 điểm): Đi học chuyên cần, không vi phạm quy chế thi, tham gia học thuật/CLB chuyên ngành.
+- Ý thức chấp hành nội quy, quy chế nhà trường (tối đa 25 điểm): Đóng học phí đúng hạn, tuân thủ nội quy lớp học, khám sức khỏe định kỳ, sinh hoạt công dân đầu khóa.
+- Ý thức tham gia hoạt động chính trị, xã hội, văn hóa, thể thao (tối đa 20 điểm): Tham gia hoạt động Đoàn - Hội, tình nguyện, hội thảo kỹ năng mềm, hiến máu nhân đạo.
+- Ý thức công dân trong quan hệ cộng đồng (tối đa 25 điểm): Chấp hành pháp luật, sống hòa đồng, không vi phạm an ninh trật tự.
+- Ý thức tham gia công tác lớp, đoàn thể hoặc đạt thành tích đặc biệt (tối đa 10 điểm): Ban cán sự lớp, Ban chấp hành Đoàn/Hội, giải thưởng NCKH hoặc cuộc thi học thuật.
+
+Xếp loại Điểm rèn luyện:
+- Xuất sắc: 90 – 100 điểm
+- Tốt: 80 – 89 điểm
+- Khá: 65 – 79 điểm
+- Trung bình: 50 – 64 điểm
+- Yếu: 35 – 49 điểm (ảnh hưởng nặng đến xét học bổng, lưu ý nhắc nhở)
+- Kém: Dưới 35 điểm (nếu 2 học kỳ liên tiếp có thể bị xem xét kỷ luật hoặc ngừng học).
+
+Lưu ý quan trọng: Để đủ điều kiện xét Học bổng Khuyến khích học tập, sinh viên bắt buộc đạt Điểm rèn luyện từ loại Tốt (80 điểm trở lên) hoặc Khá trở lên tùy bậc học bổng.
+
+2. NGHIÊN CỨU KHOA HỌC SINH VIÊN (NCKH) VÀ CÂU LẠC BỘ CHUYÊN NGÀNH
+- Lợi ích khi tham gia từ năm 2 – năm 3:
+  + Cộng điểm rèn luyện tối đa ở tiêu chí học thuật và thành tích đặc biệt.
+  + Được ưu tiên xét học bổng tài năng, học bổng doanh nghiệp và danh hiệu "Sinh viên 5 tốt".
+  + Có sẵn sản phẩm thực tế, bài báo hoặc đồ án nổi bật để đưa vào CV xin thực tập và khóa luận tốt nghiệp.
+- Cách bắt đầu: Chọn 1 môn chuyên ngành yêu thích -> trao đổi trực tiếp với giảng viên phụ trách để xin tham gia nhóm nghiên cứu hoặc đăng ký đề tài NCKH cấp Khoa.
+
+3. CHUẨN BỊ THỰC TẬP DOANH NGHIỆP VÀ KHÓA LUẬN TỐT NGHIỆP (NĂM 3 – NĂM 4)
+- Điều kiện đi thực tập tốt nghiệp: Hoàn thành phần lớn các học phần cơ sở ngành và chuyên ngành theo khung chương trình (thường tích lũy từ 75%–80% tổng số tín chỉ trở lên).
+- Lộ trình chuẩn bị hiệu quả:
+  + Trước kỳ thực tập 2–3 tháng: Hoàn thiện CV ngắn gọn (1 trang), tổng hợp 2–3 đồ án môn học tiêu biểu trên GitHub/Portfolio.
+  + Liên hệ sớm với Giảng viên hướng dẫn để chốt đề tài thực tế, tránh chọn đề tài quá rộng hoặc thiếu dữ liệu thực nghiệm.
+  + Với sinh viên có CPA chưa cao (dưới 2.5/4.0): Nên ưu tiên học cải thiện các môn điểm D/C trước năm cuối và đăng ký các học phần thay thế khóa luận (nếu khoa cho phép) để đảm bảo ra trường đúng tiến độ.

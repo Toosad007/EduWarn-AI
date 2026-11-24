@@ -1,0 +1,39 @@
+CHÍNH SÁCH HỖ TRỢ TÀI CHÍNH, VAY VỐN, ĐỜI SỐNG VÀ QUY TRÌNH CAN THIỆP CỐ VẤN HỌC TẬP
+
+1. CHÍNH SÁCH MIỄN, GIẢM HỌC PHÍ VÀ TRỢ CẤP XÃ HỘI
+- Miễn 100% học phí: Sinh viên là con liệt sĩ, con thương binh/bệnh binh (theo quy định Nghị định 81/2021/NĐ-CP), sinh viên khuyết tật, sinh viên dân tộc thiểu số rất ít người, hoặc sinh viên mồ côi cả cha lẫn mẹ không nơi nương tựa thuộc hộ nghèo/cận nghèo.
+- Giảm 50%–70% học phí: Sinh viên dân tộc thiểu số ở vùng đặc biệt khó khăn, con cán bộ/công nhân viên chức bị tai nạn lao động hoặc bệnh nghề nghiệp hưởng trợ cấp thường xuyên.
+- Hồ sơ cần chuẩn bị: Nộp đơn theo mẫu kèm giấy tờ minh chứng công chứng tại Phòng Công tác Sinh viên trong vòng 30 ngày đầu mỗi học kỳ để được xét duyệt kịp thời.
+
+2. VAY VỐN TÍN DỤNG SINH VIÊN (NGÂN HÀNG CHÍNH SÁCH XÃ HỘI)
+- Đối tượng: Sinh viên mồ côi, hộ nghèo, hộ cận nghèo, hộ có mức sống trung bình, hoặc gia đình gặp khó khăn tài chính đột xuất do thiên tai, bệnh tật, tai nạn.
+- Mức vay hiện hành: Tối đa 4.000.000 VNĐ/tháng/sinh viên (40 triệu VNĐ/năm học) với lãi suất ưu đãi thấp, chỉ bắt đầu trả gốc và lãi sau khi ra trường 12 tháng.
+- Thủ tục tại trường: Sinh viên xin "Giấy xác nhận đang theo học để vay vốn" tại Phòng Công tác Sinh viên hoặc Phòng Đào tạo (xử lý trong 1–3 ngày làm việc), sau đó mang về địa phương nộp cho Tổ tiết kiệm & vay vốn để giải ngân.
+
+3. CÂN BẰNG VIỆC LÀM THÊM VÀ HỌC ĐẠI HỌC
+- Sinh viên năm nhất (Học kỳ 1 & 2) được khuyến cáo không làm thêm quá 15–20 giờ/tuần và tránh ca đêm kéo dài, vì đây là giai đoạn quyết định khả năng thích nghi môi trường đại học.
+- Nếu bắt buộc phải làm thêm để trang trải chi phí ở trọ:
+  + Ưu tiên công việc liên quan đến chuyên ngành hoặc gia sư, trợ giảng trong trường để linh hoạt lịch thi.
+  + Trao đổi thẳng thắn với Cố vấn học tập để điều chỉnh số tín chỉ đăng ký phù hợp (14–16 tín chỉ thay vì 22–24 tín chỉ) nhằm tránh rớt môn hàng loạt.
+  + Tận dụng quỹ hỗ trợ sinh viên khó khăn và học bổng doanh nghiệp của Khoa/Trường.
+
+4. QUY TRÌNH CAN THIỆP CỦA CỐ VẤN HỌC TẬP THEO 4 MỨC RỦI RO (EDUWARN AI)
+- Mức Khẩn cấp (Nhóm Dropout, xác suất bỏ học >= 60%):
+  + Thời hạn hành động: Liên hệ trực tiếp trong vòng 48 giờ (điện thoại/Zalo/Email).
+  + Hành động: Mời gặp mặt trực tiếp, rà soát nguyên nhân cốt lõi (nợ học phí, rớt quá 50% số môn, bỏ thi hoặc vấn đề tâm lý), lập biên bản cam kết lộ trình học lại, hướng dẫn xin gia hạn học phí hoặc bảo lưu tạm thời nếu cần; phối hợp thông báo gia đình khi sinh viên mất liên lạc.
+- Mức Cao (Nhóm Dropout, xác suất bỏ học < 60%):
+  + Thời hạn hành động: Trao đổi trong vòng 1 tuần.
+  + Hành động: Tư vấn giảm tải tín chỉ kỳ kế tiếp, ghép nhóm học tập/trợ giảng môn cốt lõi, kiểm tra lại hoàn cảnh tài chính và phương pháp học.
+- Mức Trung bình (Nhóm Enrolled — Đang học, cần theo dõi):
+  + Thời hạn hành động: Rà soát định kỳ vào giữa học kỳ.
+  + Hành động: Nhắc nhở điểm chuyên cần, lập kế hoạch trả nợ 1–2 môn yếu và đặt mục tiêu nâng GPA lên trên 2.5/4.0.
+- Mức Thấp (Nhóm Graduate — Khả quan, đúng tiến độ):
+  + Thời hạn hành động: Theo dõi định kỳ cuối kỳ.
+  + Hành động: Biểu dương, giới thiệu học bổng khuyến khích học tập, nghiên cứu khoa học sinh viên, câu lạc bộ chuyên ngành và cơ hội thực tập sớm.
+
+5. HƯỚNG DẪN ĐỌC KẾT QUẢ & QUY ĐỔI ĐIỂM TRONG HỆ THỐNG EDUWARN AI
+- Hệ thống EduWarn AI hỗ trợ nhập trực tiếp điểm Việt Nam và tự động quy đổi sang chuẩn mô hình UCI:
+  + Điểm TB Học kỳ 1: Thang 4.0 (nhân 5), Thang 10 (nhân 2) sang Thang 20. Đạt chuẩn từ 2.0/4.0 (5.0/10 hoặc 10.0/20) trở lên.
+  + Điểm trúng tuyển Đại học: Thang 30 quy đổi sang Thang 200 (điểm / 30 x 200).
+  + Điểm học bạ / Tốt nghiệp THPT: Thang 10 quy đổi sang Thang 200 (điểm x 20).
+- Tính năng Giả lập What-if giúp Cố vấn học tập chứng minh trực quan cho sinh viên thấy nguy cơ bỏ học sẽ giảm bao nhiêu phần trăm nếu hoàn tất học phí hoặc thi đạt thêm 2 học phần trong học kỳ tới.

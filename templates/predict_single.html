@@ -1,0 +1,976 @@
+{% extends "base.html" %}
+
+{% block title %}Dự Đoán Cá Nhân - EduWarn AI{% endblock %}
+
+{% block content %}
+<div class="row mb-4 no-print">
+    <div class="col-12">
+        <h3 class="fw-bold text-dark mb-1">Dự Đoán Học Vụ Cá Nhân</h3>
+        <p class="text-secondary mb-0">
+            Nhập kết quả Học kỳ 1 (hỗ trợ trực tiếp thang điểm Việt Nam) và tình trạng học phí để đánh giá sớm nguy cơ bỏ học. Các thông tin phụ nếu chưa có có thể chọn <strong>"Không biết / Chưa rõ"</strong> hoặc để trống.
+        </p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột bên trái: Form nhập liệu (Ẩn khi in PDF) -->
+    <div class="col-lg-7 no-print">
+        <form id="predictionForm" class="card-custom">
+            <!-- 0. Thông tin định danh sinh viên (Tùy chọn - Không đưa vào mô hình ML) -->
+            <h5 class="fw-bold text-primary mb-1">
+                <i class="fa-solid fa-id-card me-2"></i>0. Thông tin hồ sơ sinh viên <span class="badge bg-light text-secondary border fw-normal ms-1" style="font-size: 0.72rem;">Tùy chọn</span>
+            </h5>
+            <p class="text-muted small mb-3 pb-2 border-bottom">
+                Dùng để hiển thị trên Phiếu đánh giá, in PDF và tự động điền tên vào Mẫu thư tư vấn AI.
+            </p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-5">
+                    <label class="form-label fw-semibold small mb-1">Họ và tên sinh viên</label>
+                    <input type="text" class="form-control" id="studentName" placeholder="VD: Nguyễn Văn An">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small mb-1">MSSV</label>
+                    <input type="text" class="form-control" id="studentId" placeholder="VD: 227480201001">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small mb-1">Lớp / Khoa</label>
+                    <input type="text" class="form-control" id="studentClass" placeholder="VD: K28-CNTT01">
+                </div>
+            </div>
+
+            <!-- 1. Kết quả học tập Học kỳ 1 (Quan trọng nhất) -->
+            <h5 class="fw-bold text-primary mb-1">
+                <i class="fa-solid fa-book-open me-2"></i>1. Kết quả học tập Học kỳ 1
+            </h5>
+            <p class="text-muted small mb-3 pb-2 border-bottom">
+                Nhóm thông tin ảnh hưởng mạnh nhất đến kết quả dự đoán của mô hình.
+            </p>
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small mb-1">Số môn đăng ký</label>
+                    <input type="number" class="form-control" id="unitsEnrolled" name="Curricular units 1st sem (enrolled)" min="0" max="30" value="6" placeholder="VD: 6">
+                    <div class="form-text" style="font-size: 0.72rem;">Tổng số môn HK1</div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small mb-1 text-primary">Số môn đã qua (Đạt)</label>
+                    <input type="number" class="form-control border-primary" id="unitsApproved" name="Curricular units 1st sem (approved)" min="0" max="30" value="5" placeholder="VD: 5">
+                    <div class="form-text" style="font-size: 0.72rem;">Số môn thi đậu</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small mb-1 text-primary">Điểm TB Học kỳ 1</label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" class="form-control border-primary" id="gradeSem1Display" min="0" max="4" value="2.70" placeholder="VD: 2.70">
+                        <select class="form-select border-primary bg-light fw-semibold" id="gradeSem1Scale" style="max-width: 122px; font-size: 0.85rem;">
+                            <option value="4" selected>Thang 4.0</option>
+                            <option value="10">Thang 10</option>
+                            <option value="20">Thang 20</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="gradeSem1" name="Curricular units 1st sem (grade)" value="13.5">
+                    <div id="gradeSem1Hint" class="form-text text-primary" style="font-size: 0.74rem;">Quy đổi mô hình: 13.5/20 (tương đương 6.75/10)</div>
+                </div>
+
+                <!-- Cảnh báo mâu thuẫn số môn -->
+                <div class="col-12" id="unitsWarningBox" style="display: none;">
+                    <div class="alert alert-danger py-2 px-3 small mb-0">
+                        <i class="fa-solid fa-circle-exclamation me-1"></i><span id="unitsWarningText"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small mb-1">Số lần dự thi / đánh giá</label>
+                    <input type="number" class="form-control" name="Curricular units 1st sem (evaluations)" min="0" max="30" value="6" placeholder="Để trống nếu chưa rõ">
+                    <div class="form-text" style="font-size: 0.72rem;">Tổng số lượt kiểm tra/thi</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small mb-1">Số môn được miễn</label>
+                    <input type="number" class="form-control" name="Curricular units 1st sem (credited)" min="0" max="30" value="0" placeholder="Thường là 0">
+                    <div class="form-text" style="font-size: 0.72rem;">Môn chuyển điểm/công nhận</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small mb-1">Số môn bỏ thi / vắng</label>
+                    <input type="number" class="form-control" name="Curricular units 1st sem (without evaluations)" min="0" max="30" value="0" placeholder="Thường là 0">
+                    <div class="form-text" style="font-size: 0.72rem;">Môn không có điểm đánh giá</div>
+                </div>
+            </div>
+
+            <!-- 2. Tài chính & Học bổng -->
+            <h5 class="fw-bold text-primary mb-1 mt-4">
+                <i class="fa-solid fa-wallet me-2"></i>2. Tình trạng học phí & Học bổng
+            </h5>
+            <p class="text-muted small mb-3 pb-2 border-bottom">
+                Nợ học phí là một trong những tín hiệu cảnh báo rủi ro cao nhất.
+            </p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Đóng học phí đúng hạn</label>
+                    <select class="form-select" id="tuitionSelect" name="Tuition fees up to date">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1" selected>Đã đóng đúng hạn</option>
+                        <option value="0">Chưa đóng / Quá hạn</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Hiện đang nợ học phí?</label>
+                    <select class="form-select" id="debtorSelect" name="Debtor">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="0" selected>Không nợ</option>
+                        <option value="1">Có nợ học phí</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Có học bổng không?</label>
+                    <select class="form-select" name="Scholarship holder">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="0" selected>Không có</option>
+                        <option value="1">Đang nhận học bổng</option>
+                    </select>
+                </div>
+                <div class="col-12" id="tuitionWarningBox" style="display: none;">
+                    <div class="alert alert-warning py-2 px-3 small mb-0">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                        <strong>Lưu ý mâu thuẫn:</strong> Bạn đang chọn đồng thời <em>"Đã đóng đúng hạn"</em> và <em>"Có nợ học phí"</em>. Hãy kiểm tra lại để kết quả dự đoán chính xác hơn.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút mở rộng thông tin bổ sung (Cách 1: Thu gọn mặc định Mục 3 & 4 để nhập nhanh) -->
+            <div class="mb-3">
+                <button class="btn btn-outline-secondary btn-sm w-100 d-flex justify-content-between align-items-center py-2 px-3"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#advancedFieldsCollapse"
+                        aria-expanded="false" aria-controls="advancedFieldsCollapse" id="btnToggleAdvanced">
+                    <span>
+                        <i class="fa-solid fa-sliders me-2 text-primary"></i>
+                        <strong>Thông tin bổ sung (Tuyển sinh & Hoàn cảnh gia đình)</strong>
+                        <span class="text-muted ms-1">— Tùy chọn, đã có sẵn giá trị chuẩn</span>
+                    </span>
+                    <i class="fa-solid fa-chevron-down" id="advancedChevron"></i>
+                </button>
+            </div>
+
+            <div class="collapse" id="advancedFieldsCollapse">
+            <!-- 3. Thông tin cơ bản & Tuyển sinh -->
+            <h5 class="fw-bold text-primary mb-1">
+                <i class="fa-solid fa-graduation-cap me-2"></i>3. Thông tin sinh viên & Tuyển sinh
+            </h5>
+            <p class="text-muted small mb-3 pb-2 border-bottom">
+                Thông tin cơ bản lúc nhập học (chọn "Không biết / Chưa rõ" nếu không có số liệu).
+            </p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Giới tính</label>
+                    <select class="form-select" name="Gender">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1">Nam</option>
+                        <option value="0" selected>Nữ</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Tuổi khi nhập học</label>
+                    <input type="number" class="form-control" name="Age at enrollment" min="15" max="70" value="19" placeholder="VD: 19">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Hình thức học</label>
+                    <select class="form-select" name="Daytime/evening attendance">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1" selected>Chính quy (Ban ngày)</option>
+                        <option value="0">Hệ buổi tối / Vừa làm vừa học</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Ngành học</label>
+                    <select class="form-select" name="Course">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="9119">Kỹ thuật tin học (CNTT)</option>
+                        <option value="9147">Quản trị / Quản lý</option>
+                        <option value="9500" selected>Điều dưỡng</option>
+                        <option value="9254">Du lịch</option>
+                        <option value="9238">Công tác xã hội</option>
+                        <option value="9070">Thiết kế truyền thông</option>
+                        <option value="9003">Nông học</option>
+                        <option value="9670">Quảng cáo & Tiếp thị</option>
+                        <option value="9773">Báo chí & Truyền thông</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Phương thức xét tuyển</label>
+                    <select class="form-select" name="Application mode">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1" selected>Xét tuyển đợt 1 (Thông thường)</option>
+                        <option value="17">Xét tuyển đợt 2 (Bổ sung)</option>
+                        <option value="39">Thí sinh lớn tuổi (Trên 23 tuổi)</option>
+                        <option value="42">Chuyển trường</option>
+                        <option value="43">Chuyển ngành học</option>
+                    </select>
+                </div>
+
+                <!-- Điểm trúng tuyển ĐH (Thang 30 / 200) -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Điểm trúng tuyển Đại học</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" class="form-control" id="admissionGradeDisplay" min="0" max="30" value="21.0" placeholder="VD: 22.5">
+                        <select class="form-select bg-light" id="admissionGradeScale" style="max-width: 112px; font-size: 0.85rem;">
+                            <option value="30" selected>Thang 30</option>
+                            <option value="200">Thang 200</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="admissionGrade" name="Admission grade" value="140.0">
+                    <div id="admissionGradeHint" class="form-text" style="font-size: 0.72rem;">Quy đổi mô hình: 140.0/200</div>
+                </div>
+
+                <!-- Điểm học bạ / THPT (Thang 10 / 200) -->
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Điểm học bạ / Tốt nghiệp THPT</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" class="form-control" id="prevGradeDisplay" min="0" max="10" value="7.0" placeholder="VD: 7.5">
+                        <select class="form-select bg-light" id="prevGradeScale" style="max-width: 112px; font-size: 0.85rem;">
+                            <option value="10" selected>Thang 10</option>
+                            <option value="200">Thang 200</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="prevGrade" name="Previous qualification (grade)" value="140.0">
+                    <div id="prevGradeHint" class="form-text" style="font-size: 0.72rem;">Quy đổi mô hình: 140.0/200</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Thứ tự nguyện vọng</label>
+                    <select class="form-select" name="Application order">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="0" selected>Nguyện vọng 1 (Ưu tiên cao nhất)</option>
+                        <option value="1">Nguyện vọng 2</option>
+                        <option value="2">Nguyện vọng 3</option>
+                        <option value="3">Nguyện vọng 4 trở lên</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Trình độ trước khi vào đại học</label>
+                    <select class="form-select" name="Previous qualification">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1" selected>Tốt nghiệp THPT (Cấp 3)</option>
+                        <option value="2">Đã có bằng Đại học / Cao đẳng</option>
+                        <option value="4">Thạc sĩ</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 4. Hoàn cảnh gia đình & Đời sống -->
+            <h5 class="fw-bold text-primary mb-1">
+                <i class="fa-solid fa-users me-2"></i>4. Hoàn cảnh gia đình & Đời sống
+            </h5>
+            <p class="text-muted small mb-3 pb-2 border-bottom">
+                Các yếu tố bối cảnh (nếu không rõ cứ chọn <strong>"Không biết / Chưa rõ"</strong>, hệ thống tự xử lý).
+            </p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Nơi ở khi đi học</label>
+                    <select class="form-select" name="Displaced">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1" selected>Ở trọ / Sống xa gia đình</option>
+                        <option value="0">Sống cùng gia đình</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Tình trạng hôn nhân</label>
+                    <select class="form-select" name="Marital Status">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1" selected>Độc thân</option>
+                        <option value="2">Đã kết hôn</option>
+                        <option value="4">Đã ly hôn</option>
+                        <option value="3">Góa</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Học vấn của mẹ</label>
+                    <select class="form-select" name="Mother's qualification">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="37">Tiểu học (Cấp 1)</option>
+                        <option value="19">Trung học cơ sở (Cấp 2)</option>
+                        <option value="1" selected>Trung học phổ thông (Cấp 3)</option>
+                        <option value="2">Đại học / Cao đẳng</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Học vấn của cha</label>
+                    <select class="form-select" name="Father's qualification">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="37">Tiểu học (Cấp 1)</option>
+                        <option value="19">Trung học cơ sở (Cấp 2)</option>
+                        <option value="1" selected>Trung học phổ thông (Cấp 3)</option>
+                        <option value="2">Đại học / Cao đẳng</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Nghề nghiệp của mẹ</label>
+                    <select class="form-select" name="Mother's occupation">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1">Quản lý / Lãnh đạo</option>
+                        <option value="2">Chuyên gia / Trí thức</option>
+                        <option value="3">Kỹ thuật viên</option>
+                        <option value="4">Nhân viên văn phòng / Hành chính</option>
+                        <option value="5" selected>Kinh doanh / Dịch vụ / Bán hàng</option>
+                        <option value="6">Nông / Lâm / Ngư nghiệp</option>
+                        <option value="7">Công nhân kỹ thuật / Thợ thủ công</option>
+                        <option value="9">Lao động phổ thông</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Nghề nghiệp của cha</label>
+                    <select class="form-select" name="Father's occupation">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1">Quản lý / Lãnh đạo</option>
+                        <option value="2">Chuyên gia / Trí thức</option>
+                        <option value="3">Kỹ thuật viên</option>
+                        <option value="4">Nhân viên văn phòng / Hành chính</option>
+                        <option value="5">Kinh doanh / Dịch vụ / Bán hàng</option>
+                        <option value="6">Nông / Lâm / Ngư nghiệp</option>
+                        <option value="7" selected>Công nhân kỹ thuật / Thợ thủ công</option>
+                        <option value="9">Lao động phổ thông</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Cần hỗ trợ đặc biệt?</label>
+                    <select class="form-select" name="Educational special needs">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="0" selected>Không</option>
+                        <option value="1">Có (Khó khăn học tập/thể chất)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Du học sinh quốc tế?</label>
+                    <select class="form-select" name="International">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="0" selected>Sinh viên trong nước</option>
+                        <option value="1">Du học sinh quốc tế</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Quốc tịch</label>
+                    <select class="form-select" name="Nacionality">
+                        <option value="">-- Không biết / Chưa rõ --</option>
+                        <option value="1" selected>Trong nước (Mặc định)</option>
+                        <option value="41">Brazil</option>
+                        <option value="103">Ukraine</option>
+                        <option value="2">Đức</option>
+                        <option value="6">Tây Ban Nha</option>
+                        <option value="14">Anh</option>
+                    </select>
+                </div>
+            </div>
+            </div><!-- /#advancedFieldsCollapse -->
+
+            <!-- 3 chỉ số kinh tế vĩ mô giữ ngầm theo giá trị trung bình chuẩn của mô hình UCI -->
+            <input type="hidden" name="Unemployment rate" value="10.8">
+            <input type="hidden" name="Inflation rate" value="1.4">
+            <input type="hidden" name="GDP" value="1.74">
+
+            <div class="d-flex gap-2">
+                <button type="submit" id="btnSubmitPredict" class="btn btn-primary-custom flex-grow-1 py-2 fs-6">
+                    <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Thực Hiện Dự Đoán Nguy Cơ
+                </button>
+                <button type="button" id="btnResetForm" class="btn btn-outline-secondary px-3" title="Đặt lại toàn bộ ô nhập về mặc định">
+                    <i class="fa-solid fa-rotate-left me-1"></i>Làm mới
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Cột bên phải: Kết quả phân tích (Mở rộng 100% khi in PDF) -->
+    <div class="col-lg-5 print-full">
+        <div id="emptyResultPlaceholder" class="card-custom text-center py-5 no-print">
+            <div class="text-muted mb-3" style="font-size: 3rem;">
+                <i class="fa-solid fa-chart-simple"></i>
+            </div>
+            <h5 class="fw-bold text-dark">Chưa có kết quả dự đoán</h5>
+            <p class="text-secondary small px-4 mb-0">
+                Nhập thông tin ở cột bên trái (tối thiểu là <strong>Kết quả Học kỳ 1</strong> và <strong>Học phí</strong>) rồi nhấn nút <strong>"Thực Hiện Dự Đoán Nguy Cơ"</strong>.
+            </p>
+        </div>
+
+        <div id="resultContainer" style="display: none;">
+            <!-- Thanh thông tin sinh viên + nút In PDF -->
+            <div class="card-custom mb-3 py-2 px-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="small">
+                    <div class="fw-bold text-dark" id="studentIdentityTitle">Phiếu Đánh Giá Học Vụ Cá Nhân</div>
+                    <div class="text-muted" id="studentIdentityMeta" style="font-size: 0.78rem;"></div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary no-print" onclick="window.print()">
+                    <i class="fa-solid fa-print me-1"></i>In / Lưu PDF
+                </button>
+            </div>
+
+            <!-- 1. Kết luận chính + Hạn xử lý + Badge Quy chế -->
+            <div id="resultBanner" class="card-custom text-center mb-3">
+                <div id="resultIcon" style="font-size: 2.3rem; line-height: 1;">🎓</div>
+                <h4 id="resultTitle" class="fw-bold mt-2 mb-1">Graduate</h4>
+                <p id="resultDesc" class="text-secondary small mb-2"></p>
+                <div id="riskTimelineBadge" class="mb-2"></div>
+                <div id="regulationBadges" class="d-flex justify-content-center flex-wrap gap-1"></div>
+            </div>
+
+            <!-- 2. Xác suất 3 nhóm -->
+            <div class="card-custom mb-3">
+                <h6 class="fw-bold mb-2"><i class="fa-solid fa-chart-pie me-2 text-primary"></i>Xác suất dự đoán của mô hình</h6>
+                <div class="row g-2 text-center mb-3">
+                    <div class="col-4">
+                        <div class="p-2 rounded bg-danger-subtle text-danger">
+                            <div class="small fw-semibold">Bỏ học</div>
+                            <div id="probDropout" class="fs-5 fw-bold">0%</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 rounded bg-warning-subtle text-warning-emphasis">
+                            <div class="small fw-semibold">Đang học</div>
+                            <div id="probEnrolled" class="fs-5 fw-bold">0%</div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 rounded bg-success-subtle text-success">
+                            <div class="small fw-semibold">Tốt nghiệp</div>
+                            <div id="probGraduate" class="fs-5 fw-bold">0%</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 140px;">
+                    <canvas id="probabilityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 3. Giải thích đúng theo lớp dự đoán (Explainable AI) -->
+            <div class="card-custom mb-3">
+                <h6 class="fw-bold mb-2">
+                    <i class="fa-solid fa-magnifying-glass-chart me-2 text-primary"></i>
+                    <span id="explainHeading">Vì sao AI đưa ra kết quả này?</span>
+                </h6>
+                <div class="small text-secondary mb-2">
+                    <div>• <strong>Tiến độ HK1:</strong> <span id="indicatorUnits">--</span></div>
+                    <div>• <strong>Điểm TB HK1:</strong> <span id="indicatorGrade">--</span></div>
+                    <div>• <strong>Học phí:</strong> <span id="indicatorTuition">--</span></div>
+                </div>
+                <hr class="my-2">
+                <div class="small fw-semibold text-dark mb-1">Các yếu tố ảnh hưởng lớn nhất tới kết luận này:</div>
+                <div id="localExplainList" class="small"></div>
+            </div>
+
+            <!-- 4. Thử giả lập cải thiện (What-if - Ẩn khi in PDF) -->
+            <div class="card-custom mb-3 border-primary-subtle no-print">
+                <h6 class="fw-bold mb-1 text-primary"><i class="fa-solid fa-flask me-2"></i>Thử giả lập nếu sinh viên cải thiện</h6>
+                <p class="small text-muted mb-2">Bấm thử để xem nguy cơ bỏ học giảm xuống bao nhiêu %:</p>
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-success whatif-btn" data-whatif="pay_tuition">
+                        <i class="fa-solid fa-check-double me-1"></i>Đóng đủ học phí
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-primary whatif-btn" data-whatif="pass_more">
+                        <i class="fa-solid fa-arrow-trend-up me-1"></i>Đạt thêm +2 môn
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-info text-dark whatif-btn" data-whatif="boost_both">
+                        <i class="fa-solid fa-bolt me-1 text-info"></i>Đủ HP + 5/6 môn (GPA 2.8/4)
+                    </button>
+                </div>
+                <div id="whatifResult" class="p-2 rounded bg-light small" style="display: none;"></div>
+            </div>
+
+            <!-- 5. Gợi ý hành động & Trợ lý AI soạn thư -->
+            <div class="card-custom mb-3">
+                <h6 class="fw-bold mb-2"><i class="fa-solid fa-list-check me-2 text-primary"></i>Gợi ý hỗ trợ cho Cố vấn học tập</h6>
+                <p id="guidanceExplanation" class="text-secondary small mb-2"></p>
+                <div id="guidanceActions" class="small text-secondary mb-3"></div>
+                <button id="btnAiAdvice" class="btn btn-primary-custom w-100 no-print" type="button">
+                    <i class="fa-solid fa-envelope-open-text me-2"></i>Nhờ AI Soạn Kế Hoạch Chi Tiết & Mẫu Thư
+                </button>
+                <div id="aiAdviceSpinner" class="text-center py-3 no-print" style="display: none;">
+                    <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                    <span class="small text-secondary">AI đang phân tích hồ sơ và soạn mẫu thư...</span>
+                </div>
+                <div id="aiAdviceResult" class="mt-3 p-3 bg-light rounded border small" style="display: none; white-space: pre-line;"></div>
+            </div>
+
+            <!-- 6. Lịch sử dự đoán trong phiên (Ẩn khi in PDF) -->
+            <div id="historyCard" class="card-custom no-print" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Lịch sử dự đoán gần đây</h6>
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0" id="btnClearHistory">Xóa</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm small mb-0">
+                        <thead><tr class="text-muted"><th>Sinh viên</th><th>Kết quả</th><th>Bỏ học</th><th>Đạt môn</th><th>GPA (4)</th></tr></thead>
+                        <tbody id="historyBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let probChart = null;
+    let currentPredictionData = null;
+
+    // --- 1. Hệ thống quy đổi 3 ô điểm Việt Nam -> Thang chuẩn UCI ---
+    function setupGradeConverter({ displayId, scaleId, hiddenId, hintId, targetMax }) {
+        const displayEl = document.getElementById(displayId);
+        const scaleEl = document.getElementById(scaleId);
+        const hiddenEl = document.getElementById(hiddenId);
+        const hintEl = document.getElementById(hintId);
+
+        let prevScale = Number(scaleEl.value);
+
+        function syncToHidden() {
+            const scale = Number(scaleEl.value);
+            displayEl.max = String(scale);
+            const raw = displayEl.value.trim();
+            if (raw === '') {
+                hiddenEl.value = '';
+                hintEl.innerText = 'Để trống: hệ thống sẽ tự ước lượng theo mức trung vị.';
+                return;
+            }
+            const val = parseFloat(raw);
+            if (isNaN(val) || val < 0 || val > scale) {
+                hintEl.innerHTML = `<span class="text-danger">Giá trị hợp lệ từ 0 đến ${scale}</span>`;
+                return;
+            }
+            const converted = (val / scale) * targetMax;
+            hiddenEl.value = converted.toFixed(2);
+            if (targetMax === 20) {
+                const eq10 = (converted / 2).toFixed(2);
+                const eq4 = (converted / 5).toFixed(2);
+                hintEl.innerText = `Quy đổi mô hình: ${converted.toFixed(1)}/20 (≈ ${eq10}/10 | ${eq4}/4.0)`;
+            } else {
+                hintEl.innerText = `Quy đổi mô hình: ${converted.toFixed(1)}/${targetMax}`;
+            }
+        }
+
+        displayEl.addEventListener('input', syncToHidden);
+        scaleEl.addEventListener('change', function () {
+            const newScale = Number(this.value);
+            const raw = displayEl.value.trim();
+            if (raw !== '' && !isNaN(parseFloat(raw))) {
+                const currentVal = parseFloat(raw);
+                const convertedDisplay = (currentVal / prevScale) * newScale;
+                const decimals = newScale <= 4 ? 2 : 1;
+                displayEl.value = Math.min(newScale, Math.max(0, convertedDisplay)).toFixed(decimals);
+            }
+            prevScale = newScale;
+            syncToHidden();
+        });
+
+        syncToHidden();
+        function setFromModelValue(modelVal) {
+            const scale = Number(scaleEl.value);
+            if (modelVal === null || modelVal === undefined || modelVal === '') {
+                displayEl.value = '';
+            } else {
+                const displayVal = (Number(modelVal) / targetMax) * scale;
+                const decimals = scale <= 4 ? 2 : 1;
+                displayEl.value = Math.min(scale, Math.max(0, displayVal)).toFixed(decimals);
+            }
+            syncToHidden();
+        }
+        return { syncToHidden, setFromModelValue, resetPrevScale: () => { prevScale = Number(scaleEl.value); syncToHidden(); } };
+    }
+
+    const sem1Conv = setupGradeConverter({
+        displayId: 'gradeSem1Display', scaleId: 'gradeSem1Scale',
+        hiddenId: 'gradeSem1', hintId: 'gradeSem1Hint', targetMax: 20
+    });
+    const admConv = setupGradeConverter({
+        displayId: 'admissionGradeDisplay', scaleId: 'admissionGradeScale',
+        hiddenId: 'admissionGrade', hintId: 'admissionGradeHint', targetMax: 200
+    });
+    const prevConv = setupGradeConverter({
+        displayId: 'prevGradeDisplay', scaleId: 'prevGradeScale',
+        hiddenId: 'prevGrade', hintId: 'prevGradeHint', targetMax: 200
+    });
+
+    // --- 2. Kiểm tra mâu thuẫn dữ liệu trực tiếp ---
+    function checkFormContradictions() {
+        const enrRaw = document.getElementById('unitsEnrolled').value.trim();
+        const appRaw = document.getElementById('unitsApproved').value.trim();
+        const unitsBox = document.getElementById('unitsWarningBox');
+        const unitsText = document.getElementById('unitsWarningText');
+        let hasHardError = false;
+
+        if (enrRaw !== '' && appRaw !== '' && Number(appRaw) > Number(enrRaw)) {
+            unitsText.innerText = `Lỗi logic: Số môn đã qua (${appRaw}) không thể lớn hơn Số môn đăng ký (${enrRaw}). Vui lòng điều chỉnh lại.`;
+            unitsBox.style.display = 'block';
+            hasHardError = true;
+        } else {
+            unitsBox.style.display = 'none';
+        }
+
+        const tuition = document.getElementById('tuitionSelect').value;
+        const debtor = document.getElementById('debtorSelect').value;
+        document.getElementById('tuitionWarningBox').style.display = (tuition === '1' && debtor === '1') ? 'block' : 'none';
+
+        document.getElementById('btnSubmitPredict').disabled = hasHardError;
+        return !hasHardError;
+    }
+
+    ['unitsEnrolled', 'unitsApproved'].forEach(id => document.getElementById(id).addEventListener('input', checkFormContradictions));
+    ['tuitionSelect', 'debtorSelect'].forEach(id => document.getElementById(id).addEventListener('change', checkFormContradictions));
+
+    // Nút Làm mới form
+    document.getElementById('btnResetForm').addEventListener('click', function () {
+        document.getElementById('predictionForm').reset();
+        sem1Conv.resetPrevScale();
+        admConv.resetPrevScale();
+        prevConv.resetPrevScale();
+        checkFormContradictions();
+    });
+
+    // Xoay mũi tên khi mở/đóng mục Thông tin bổ sung
+    const advCollapseEl = document.getElementById('advancedFieldsCollapse');
+    if (advCollapseEl) {
+        advCollapseEl.addEventListener('show.bs.collapse', () => {
+            document.getElementById('advancedChevron').className = 'fa-solid fa-chevron-up';
+        });
+        advCollapseEl.addEventListener('hide.bs.collapse', () => {
+            document.getElementById('advancedChevron').className = 'fa-solid fa-chevron-down';
+        });
+    }
+
+    // --- 3. Gửi form dự đoán ---
+    document.getElementById('predictionForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (!checkFormContradictions()) return;
+
+        // Đảm bảo 3 ô điểm ẩn đã đồng bộ trước khi gửi
+        sem1Conv.syncToHidden();
+        admConv.syncToHidden();
+        prevConv.syncToHidden();
+
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => {
+            const trimmed = String(value).trim();
+            if (trimmed === '') {
+                data[key] = null;
+            } else {
+                data[key] = isNaN(trimmed) ? trimmed : Number(trimmed);
+            }
+        });
+
+        try {
+            const response = await fetch('/api/predict-single', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await response.json();
+            if (res.status === 'success') {
+                currentPredictionData = res;
+                displayResults(res, data);
+            } else {
+                alert('Lỗi: ' + res.message);
+            }
+        } catch (err) {
+            alert('Lỗi kết nối máy chủ: ' + err.message);
+        }
+    });
+
+    // --- 4. Hiển thị kết quả ---
+    function displayResults(res, inputData) {
+        document.getElementById('emptyResultPlaceholder').style.display = 'none';
+        document.getElementById('resultContainer').style.display = 'block';
+
+        // Thông tin định danh sinh viên (dùng khi xem & in PDF)
+        const sName = document.getElementById('studentName').value.trim();
+        const sId = document.getElementById('studentId').value.trim();
+        const sClass = document.getElementById('studentClass').value.trim();
+        const nowStr = new Date().toLocaleString('vi-VN');
+        document.getElementById('studentIdentityTitle').innerText = sName
+            ? `Phiếu Đánh Giá: ${sName}`
+            : 'Phiếu Đánh Giá Học Vụ Cá Nhân';
+        const metaParts = [];
+        if (sId) metaParts.push(`MSSV: ${sId}`);
+        if (sClass) metaParts.push(`Lớp/Khoa: ${sClass}`);
+        metaParts.push(`Ngày lập: ${nowStr}`);
+        document.getElementById('studentIdentityMeta').innerText = metaParts.join('  •  ');
+
+        const p = res.prediction;
+        const pDrop = res.probabilities['Dropout'] || 0;
+        const pEnr = res.probabilities['Enrolled'] || 0;
+        const pGrad = res.probabilities['Graduate'] || 0;
+
+        const banner = document.getElementById('resultBanner');
+        const title = document.getElementById('resultTitle');
+        const desc = document.getElementById('resultDesc');
+        const icon = document.getElementById('resultIcon');
+        const timelineBox = document.getElementById('riskTimelineBadge');
+
+        if (p === 'Dropout') {
+            banner.style.backgroundColor = '#fef2f2';
+            banner.style.borderColor = '#fecaca';
+            title.style.color = '#991b1b';
+            title.innerText = 'Nguy cơ bỏ học cao (Dropout)';
+            icon.innerText = '⚠️';
+            desc.innerText = 'Hồ sơ có dấu hiệu rủi ro rõ rệt, cố vấn học tập nên liên hệ trao đổi và hỗ trợ sớm.';
+            if (pDrop >= 60) {
+                timelineBox.innerHTML = '<span class="badge bg-danger px-3 py-1 rounded-pill">🔴 Mức Khẩn cấp — Liên hệ trong 48 giờ</span>';
+            } else {
+                timelineBox.innerHTML = '<span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 rounded-pill">🟠 Mức Cao — Trao đổi trong 1 tuần</span>';
+            }
+        } else if (p === 'Enrolled') {
+            banner.style.backgroundColor = '#fffbeb';
+            banner.style.borderColor = '#fde68a';
+            title.style.color = '#92400e';
+            title.innerText = 'Đang theo học – Cần theo dõi (Enrolled)';
+            icon.innerText = '⏳';
+            desc.innerText = 'Sinh viên đang duy trì việc học ở mức trung bình, cần rà soát kế hoạch học kỳ tới.';
+            timelineBox.innerHTML = '<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1 rounded-pill">🟡 Mức Trung bình — Theo dõi định kỳ giữa kỳ</span>';
+        } else {
+            banner.style.backgroundColor = '#f0fdf4';
+            banner.style.borderColor = '#bbf7d0';
+            title.style.color = '#166534';
+            title.innerText = 'Khả quan – Đúng tiến độ (Graduate)';
+            icon.innerText = '🎓';
+            desc.innerText = 'Kết quả Học kỳ 1 tích cực, sinh viên có khả năng cao hoàn thành tốt nghiệp đúng hạn.';
+            timelineBox.innerHTML = '<span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">🟢 Mức Thấp — Duy trì & khuyến khích</span>';
+        }
+
+        // Badge đối chiếu Quy chế đào tạo tín chỉ (Thông tư 08/2021) & Hồ sơ sát nút
+        const enrolled = inputData['Curricular units 1st sem (enrolled)'];
+        const approved = inputData['Curricular units 1st sem (approved)'];
+        const grade = inputData['Curricular units 1st sem (grade)'];
+        const debtor = inputData['Debtor'];
+        const tuition = inputData['Tuition fees up to date'];
+
+        const regBadges = [];
+        if (res.close_result) {
+            regBadges.push('<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">⚖️ Hồ sơ sát nút — Cần xem xét thêm</span>');
+        }
+        const failRateHigh = (enrolled !== null && approved !== null && enrolled > 0 && (approved / enrolled) < 0.5);
+        const lowGpa = (grade !== null && grade !== undefined && Number(grade) < 10.0);
+        if (failRateHigh || lowGpa) {
+            regBadges.push('<span class="badge bg-danger-subtle text-danger border border-danger-subtle">⚠️ Diện Cảnh báo học vụ Mức 1 (TT 08/2021)</span>');
+        }
+        const eligibleScholarship = (
+            grade !== null && grade !== undefined && Number(grade) >= 16.0 &&
+            enrolled !== null && approved !== null && enrolled > 0 && approved >= enrolled &&
+            debtor !== 1 && tuition !== 0
+        );
+        if (eligibleScholarship) {
+            regBadges.push('<span class="badge bg-success-subtle text-success border border-success-subtle">🏆 Đủ điều kiện xét Học bổng Khuyến khích</span>');
+        }
+        document.getElementById('regulationBadges').innerHTML = regBadges.join('');
+
+        document.getElementById('probDropout').innerText = pDrop.toFixed(1) + '%';
+        document.getElementById('probEnrolled').innerText = pEnr.toFixed(1) + '%';
+        document.getElementById('probGraduate').innerText = pGrad.toFixed(1) + '%';
+
+        const ctx = document.getElementById('probabilityChart').getContext('2d');
+        if (probChart) probChart.destroy();
+        probChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Bỏ học', 'Đang học', 'Tốt nghiệp'],
+                datasets: [{
+                    data: [pDrop, pEnr, pGrad],
+                    backgroundColor: ['#ef4444', '#f59e0b', '#10b981'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { min: 0, max: 100, ticks: { callback: v => v + '%' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 3 chỉ số tóm tắt (có quy đổi thang 4.0 & thang 10)
+        if (enrolled === null || approved === null || enrolled === undefined || approved === undefined) {
+            document.getElementById('indicatorUnits').innerText = 'Chưa rõ (hệ thống tự ước lượng)';
+        } else {
+            document.getElementById('indicatorUnits').innerText = `Đạt ${approved}/${enrolled} môn (${enrolled > 0 ? ((approved / enrolled) * 100).toFixed(0) : 0}%)`;
+        }
+
+        if (grade === null || grade === undefined) {
+            document.getElementById('indicatorGrade').innerText = 'Chưa rõ (hệ thống tự ước lượng)';
+        } else {
+            const g20 = Number(grade);
+            const g4 = (g20 / 5).toFixed(2);
+            const g10 = (g20 / 2).toFixed(1);
+            document.getElementById('indicatorGrade').innerText = `${g4}/4.0 (${g10}/10 • ${g20.toFixed(1)}/20 — ${g20 < 10 ? 'Dưới chuẩn đạt' : 'Đạt chuẩn'})`;
+        }
+
+        if (debtor === null && tuition === null) {
+            document.getElementById('indicatorTuition').innerText = 'Chưa rõ';
+        } else {
+            const hasDebt = (debtor === 1 || tuition === 0);
+            document.getElementById('indicatorTuition').innerText = hasDebt ? '⚠️ Đang nợ hoặc quá hạn đóng' : '✅ Đã đóng đầy đủ đúng hạn';
+        }
+
+        // Giải thích yếu tố tác động ĐÚNG theo nhóm dự đoán (Dropout / Enrolled / Graduate)
+        const classLabelMap = {
+            'Dropout': 'Bỏ học',
+            'Enrolled': 'Đang học',
+            'Graduate': 'Tốt nghiệp'
+        };
+        document.getElementById('explainHeading').innerText = `Vì sao AI dự đoán nhóm ${classLabelMap[p] || p}?`;
+
+        const explainBox = document.getElementById('localExplainList');
+        explainBox.innerHTML = '';
+        if (res.explanations && res.explanations.length) {
+            res.explanations.forEach(item => {
+                let badgeCls = 'bg-secondary-subtle text-secondary';
+                if (p === 'Dropout') {
+                    badgeCls = item.supports_prediction ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success';
+                } else if (p === 'Graduate') {
+                    badgeCls = item.supports_prediction ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning-emphasis';
+                } else {
+                    badgeCls = item.supports_prediction ? 'bg-warning-subtle text-warning-emphasis' : 'bg-secondary-subtle text-secondary';
+                }
+                const valHtml = item.value_text ? `<span class="text-muted ms-1">(${item.value_text})</span>` : '';
+                explainBox.innerHTML += `
+                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom gap-2">
+                        <span class="text-dark">${item.feature}${valHtml}</span>
+                        <span class="badge ${badgeCls} rounded-pill text-nowrap">${item.impact_text}</span>
+                    </div>`;
+            });
+        }
+
+        // Reset What-if & AI Advice
+        const wfBox = document.getElementById('whatifResult');
+        wfBox.style.display = 'none';
+        wfBox.innerHTML = '';
+        document.getElementById('aiAdviceResult').style.display = 'none';
+        document.getElementById('aiAdviceResult').innerText = '';
+
+        // Lộ trình can thiệp
+        document.getElementById('guidanceExplanation').innerText = res.explanation;
+        const actionsContainer = document.getElementById('guidanceActions');
+        actionsContainer.innerHTML = res.actions.map((act, idx) => `<div class="mb-1"><strong>${idx + 1}.</strong> ${act}</div>`).join('');
+
+        // Cập nhật lịch sử phiên
+        window.sessionHistory = window.sessionHistory || [];
+        const historyLabel = sName ? (sId ? `${sName} (${sId})` : sName) : `#${window.sessionHistory.length + 1}`;
+        window.sessionHistory.unshift({
+            label: historyLabel,
+            prediction: p,
+            dropout: pDrop.toFixed(1) + '%',
+            units: (approved !== null && enrolled !== null) ? `${approved}/${enrolled}` : 'Chưa rõ',
+            gpa4: (grade !== null && grade !== undefined) ? (Number(grade) / 5).toFixed(2) : 'Chưa rõ'
+        });
+        window.sessionHistory = window.sessionHistory.slice(0, 8);
+        document.getElementById('historyCard').style.display = 'block';
+        document.getElementById('historyBody').innerHTML = window.sessionHistory.map(h => `
+            <tr>
+                <td class="text-truncate" style="max-width: 115px;" title="${h.label}">${h.label}</td>
+                <td><span class="badge ${h.prediction === 'Dropout' ? 'bg-danger' : (h.prediction === 'Enrolled' ? 'bg-warning text-dark' : 'bg-success')}">${h.prediction}</span></td>
+                <td>${h.dropout}</td>
+                <td>${h.units}</td>
+                <td>${h.gpa4}</td>
+            </tr>`).join('');
+    }
+
+    // Xóa lịch sử phiên
+    document.getElementById('btnClearHistory').addEventListener('click', () => {
+        window.sessionHistory = [];
+        document.getElementById('historyBody').innerHTML = '';
+        document.getElementById('historyCard').style.display = 'none';
+    });
+
+    // Mô phỏng What-if
+    document.querySelectorAll('.whatif-btn').forEach(btn => {
+        btn.addEventListener('click', async function () {
+            if (!currentPredictionData) return;
+            const mode = this.getAttribute('data-whatif');
+            const simData = { ...currentPredictionData.input_values };
+            let label = '';
+            if (mode === 'pay_tuition') {
+                simData['Tuition fees up to date'] = 1;
+                simData['Debtor'] = 0;
+                label = 'Nếu đóng đủ học phí & không còn nợ';
+            } else if (mode === 'pass_more') {
+                const enr = Number(simData['Curricular units 1st sem (enrolled)'] ?? 6);
+                const app = Number(simData['Curricular units 1st sem (approved)'] ?? 0);
+                simData['Curricular units 1st sem (approved)'] = Math.min(enr, app + 2);
+                label = `Nếu đạt thêm +2 môn (${simData['Curricular units 1st sem (approved)']}/${enr} môn)`;
+            } else if (mode === 'boost_both') {
+                simData['Tuition fees up to date'] = 1;
+                simData['Debtor'] = 0;
+                simData['Curricular units 1st sem (enrolled)'] = 6;
+                simData['Curricular units 1st sem (approved)'] = 5;
+                simData['Curricular units 1st sem (grade)'] = 14.0;
+                label = 'Nếu đóng đủ HP + đạt 5/6 môn (GPA 2.8/4.0)';
+            }
+
+            const wfBox = document.getElementById('whatifResult');
+            wfBox.style.display = 'block';
+            wfBox.innerHTML = '<span class="text-muted">Đang tính toán mô phỏng...</span>';
+            try {
+                const r = await fetch('/api/predict-single', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(simData)
+                });
+                const simRes = await r.json();
+                if (simRes.status === 'success') {
+                    const oldDrop = currentPredictionData.probabilities['Dropout'] || 0;
+                    const newDrop = simRes.probabilities['Dropout'] || 0;
+                    const diff = oldDrop - newDrop;
+                    const diffText = diff >= 0
+                        ? `<span class="text-success fw-bold">giảm ${diff.toFixed(1)}%</span>`
+                        : `<span class="text-danger fw-bold">tăng ${Math.abs(diff).toFixed(1)}%</span>`;
+                    wfBox.innerHTML = `
+                        <div class="fw-semibold text-dark mb-1">${label}:</div>
+                        <div>Nguy cơ <strong>Bỏ học</strong>: <strong>${oldDrop.toFixed(1)}%</strong> &rarr; <strong>${newDrop.toFixed(1)}%</strong> (${diffText}) | Nhãn mới: <span class="badge bg-primary">${simRes.prediction}</span></div>`;
+                }
+            } catch (e) {
+                wfBox.innerHTML = '<span class="text-danger">Không thể mô phỏng.</span>';
+            }
+        });
+    });
+
+    // Bấm nút nhờ AI soạn tư vấn & mẫu thư (kèm Họ tên / MSSV / Lớp)
+    document.getElementById('btnAiAdvice').addEventListener('click', async function () {
+        if (!currentPredictionData) return;
+        const spinner = document.getElementById('aiAdviceSpinner');
+        const resultBox = document.getElementById('aiAdviceResult');
+        spinner.style.display = 'block';
+        resultBox.style.display = 'none';
+
+        try {
+            const response = await fetch('/api/generate-advice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prediction: currentPredictionData.prediction,
+                    probabilities: currentPredictionData.probabilities,
+                    input_values: currentPredictionData.input_values,
+                    explanations: currentPredictionData.explanations || [],
+                    student_name: document.getElementById('studentName').value.trim(),
+                    student_id: document.getElementById('studentId').value.trim(),
+                    student_class: document.getElementById('studentClass').value.trim()
+                })
+            });
+            const data = await response.json();
+            spinner.style.display = 'none';
+            if (data.status === 'success') {
+                resultBox.style.display = 'block';
+                const renderedHtml = typeof marked !== 'undefined' ? marked.parse(data.advice) : data.advice.replace(/\n/g, '<br>');
+                resultBox.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom no-print">
+                        <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fa-solid fa-user-tie me-1"></i> Kế hoạch tư vấn & Mẫu thư</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText(document.getElementById('adviceContentArea').innerText); alert('Đã sao chép nội dung tư vấn!');">
+                            <i class="fa-regular fa-copy me-1"></i> Sao chép
+                        </button>
+                    </div>
+                    <div id="adviceContentArea" class="markdown-rendered">${renderedHtml}</div>
+                `;
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        } catch (err) {
+            spinner.style.display = 'none';
+            alert('Lỗi kết nối AI: ' + err.message);
+        }
+    });
+</script>
+{% endblock %}

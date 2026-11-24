@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Dự Đoán Hàng Loạt - EduWarn AI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="fw-bold text-dark mb-1">Dự Đoán Danh Sách Hàng Loạt</h3>
+        <p class="text-secondary mb-0">
+            Tải lên file danh sách sinh viên định dạng Excel (.xlsx) hoặc CSV để xử lý dự đoán đồng thời cho nhiều sinh viên và xuất báo cáo kết quả.
+        </p>
+    </div>
+</div>
+
+<!-- 1. Tải file mẫu -->
+<div class="card-custom mb-4">
+    <div class="card-title-custom">
+        <i class="fa-solid fa-download text-primary"></i>
+        <span>1. Tải File Mẫu Chuẩn Hóa</span>
+    </div>
+    <p class="text-secondary small mb-3">
+        Để hệ thống xử lý chính xác, hãy tải file mẫu chuẩn bên dưới và điền thông tin sinh viên theo đúng cấu trúc cột.
+    </p>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('download_template_csv') }}" class="btn btn-outline-custom">
+            <i class="fa-solid fa-file-csv text-success me-2"></i>Tải File Mẫu CSV (.csv)
+        </a>
+        <a href="{{ url_for('download_template_excel') }}" class="btn btn-outline-custom">
+            <i class="fa-solid fa-file-excel text-success me-2"></i>Tải File Mẫu Excel (.xlsx)
+        </a>
+    </div>
+</div>
+
+<!-- 2. Form Tải File Lên -->
+<div class="card-custom mb-4">
+    <div class="card-title-custom">
+        <i class="fa-solid fa-upload text-primary"></i>
+        <span>2. Tải File Dữ Liệu Sinh Viên</span>
+    </div>
+    <form id="batchUploadForm" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label small fw-semibold">Chọn file danh sách sinh viên (.csv, .xlsx, .xls)</label>
+            <input type="file" class="form-control" name="file" id="batchFile" accept=".csv, .xlsx, .xls" required>
+        </div>
+        <button type="submit" class="btn btn-primary-custom" id="btnUploadBatch">
+            <i class="fa-solid fa-bolt me-2"></i>Tiến Hành Xử Lý & Dự Đoán
+        </button>
+    </form>
+    <div id="batchSpinner" class="text-center py-4" style="display: none;">
+        <div class="spinner-border text-primary me-2"></div>
+        <span class="text-secondary fw-semibold">Đang đọc dữ liệu, tiền xử lý và chạy mô hình Machine Learning...</span>
+    </div>
+</div>
+
+<!-- 3. Khu vực Kết quả Dự đoán hàng loạt -->
+<div id="batchResultSection" style="display: none;">
+    <!-- Thống kê tổng quan -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card-custom text-center py-3 h-100">
+                <span class="text-secondary small fw-semibold">Tổng số hồ sơ</span>
+                <h3 id="statTotal" class="fw-bold my-1 text-dark">0</h3>
+                <span class="small text-muted">Sinh viên đã xử lý</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-custom text-center py-3 h-100 border-start border-4 border-danger">
+                <span class="text-danger small fw-semibold">Nguy cơ thôi học (Dropout)</span>
+                <h3 id="statDropout" class="fw-bold my-1 text-danger">0</h3>
+                <span id="pctDropout" class="small text-muted">0%</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-custom text-center py-3 h-100 border-start border-4 border-warning">
+                <span class="text-warning small fw-semibold">Đang theo học (Enrolled)</span>
+                <h3 id="statEnrolled" class="fw-bold my-1 text-warning">0</h3>
+                <span id="pctEnrolled" class="small text-muted">0%</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-custom text-center py-3 h-100 border-start border-4 border-success">
+                <span class="text-success small fw-semibold">Đúng tiến độ (Graduate)</span>
+                <h3 id="statGraduate" class="fw-bold my-1 text-success">0</h3>
+                <span id="pctGraduate" class="small text-muted">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng chi tiết kết quả -->
+    <div class="card-custom">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div class="card-title-custom mb-0">
+                <i class="fa-solid fa-table-list text-primary"></i>
+                <span>Chi Tiết Kết Quả Dự Đoán Từng Sinh Viên</span>
+            </div>
+            <a id="btnExportExcel" href="#" class="btn btn-sm btn-outline-custom">
+                <i class="fa-solid fa-file-excel text-success me-2"></i>Tải Xuống File Excel Đầy Đủ
+            </a>
+        </div>
+        
+        <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+            <table class="table table-hover align-middle small" id="batchResultTable">
+                <thead class="table-light sticky-top">
+                    <tr>
+                        <th>Mã SV</th>
+                        <th>Họ và Tên</th>
+                        <th>Kết Quả Dự Đoán</th>
+                        <th>Xác Suất Bỏ Học (%)</th>
+                        <th>Xác Suất Đang Học (%)</th>
+                        <th>Xác Suất Tốt Nghiệp (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="batchTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('batchUploadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('batchFile');
+    if (!fileInput.files.length) {
+        alert('Vui lòng chọn một file dữ liệu.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    const spinner = document.getElementById('batchSpinner');
+    const resultSec = document.getElementById('batchResultSection');
+    spinner.style.display = 'block';
+    resultSec.style.display = 'none';
+
+    try {
+        const response = await fetch('/api/predict-batch', {
+            method: 'POST',
+            body: formData
+        });
+        const res = await response.json();
+        spinner.style.display = 'none';
+
+        if (res.status === 'success') {
+            displayBatchResults(res);
+        } else {
+            alert('Lỗi: ' + res.message);
+        }
+    } catch (err) {
+        spinner.style.display = 'none';
+        alert('Lỗi xử lý file: ' + err.message);
+    }
+});
+
+function displayBatchResults(res) {
+    const data = res.data;
+    const total = data.length;
+    let dCount = 0, eCount = 0, gCount = 0;
+
+    const tbody = document.getElementById('batchTableBody');
+    tbody.innerHTML = '';
+
+    data.forEach(row => {
+        const pred = row['Ket_qua_du_doan'];
+        if (pred === 'Dropout') dCount++;
+        else if (pred === 'Enrolled') eCount++;
+        else gCount++;
+
+        let badgeClass = 'badge-graduate';
+        if (pred === 'Dropout') badgeClass = 'badge-dropout';
+        else if (pred === 'Enrolled') badgeClass = 'badge-enrolled';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="fw-semibold">${row['Ma_sinh_vien'] || '--'}</td>
+            <td>${row['Ho_va_ten'] || '--'}</td>
+            <td><span class="${badgeClass}">${pred}</span></td>
+            <td><span class="text-danger fw-semibold">${row['Dropout_(%)']}%</span></td>
+            <td><span class="text-warning fw-semibold">${row['Enrolled_(%)']}%</span></td>
+            <td><span class="text-success fw-semibold">${row['Graduate_(%)']}%</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    document.getElementById('statTotal').innerText = total;
+    document.getElementById('statDropout').innerText = dCount;
+    document.getElementById('statEnrolled').innerText = eCount;
+    document.getElementById('statGraduate').innerText = gCount;
+
+    document.getElementById('pctDropout').innerText = ((dCount/total)*100).toFixed(1) + '%';
+    document.getElementById('pctEnrolled').innerText = ((eCount/total)*100).toFixed(1) + '%';
+    document.getElementById('pctGraduate').innerText = ((gCount/total)*100).toFixed(1) + '%';
+
+    document.getElementById('btnExportExcel').href = '/export/batch-excel?token=' + encodeURIComponent(res.token);
+    document.getElementById('batchResultSection').style.display = 'block';
+}
+</script>
+{% endblock %}

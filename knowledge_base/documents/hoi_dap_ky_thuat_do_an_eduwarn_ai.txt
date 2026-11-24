@@ -1,0 +1,27 @@
+TỔNG HỢP HỎI ĐÁP KỸ THUẬT CHUYÊN SÂU VỀ ĐỒ ÁN EDUWARN AI (MÔN TRÍ TUỆ NHÂN TẠO ỨNG DỤNG)
+
+1. THÔNG SỐ KỸ THUẬT THỰC TẾ CỦA MÔ HÌNH TRONG HỆ THỐNG
+- Tập dữ liệu: UCI Predict Students' Dropout and Academic Success (4.424 sinh viên, 37 cột gốc, 3 lớp Target: Graduate 49.93%, Dropout 32.12%, Enrolled 17.95%).
+- Chống rò rỉ dữ liệu (Data Leakage): Loại bỏ hoàn toàn 6 cột Học kỳ 2, giữ lại chính xác 30 cột đầu vào đến hết Học kỳ 1.
+- Pipeline tiền xử lý (ColumnTransformer):
+  + Nhánh cat (23 cột phân loại & đếm): SimpleImputer(strategy='most_frequent') -> OneHotEncoder(handle_unknown='ignore').
+  + Nhánh num (7 cột số liên tục: điểm THPT, điểm tuyển sinh, điểm TB HK1, tuổi nhập học, tỷ lệ thất nghiệp, lạm phát, GDP): SimpleImputer(strategy='median') -> StandardScaler().
+  + Tổng số chiều sau tiền xử lý: 353 đặc trưng (features).
+- Mô hình triển khai chính thức: Multinomial Logistic Regression với siêu tham số thực tế C=1.0, penalty='l2' (Ridge Regularization), solver='lbfgs', max_iter=2000, tol=0.0001, random_state=42. Dung lượng file student_dropout_model.pkl chỉ 18.7 KB.
+
+2. KẾT QUẢ ĐỐI SÁNH 5 THUẬT TOÁN TRÊN TẬP TEST PHÂN TẦNG 80/20 (885 MẪU)
+- Logistic Regression (Được chọn): Accuracy = 77.06%, Macro F1 = 0.7042 (F1 Dropout = 0.7712, F1 Enrolled = 0.4528, F1 Graduate = 0.8415).
+- Random Forest: Accuracy = 76.84%, Macro F1 = 0.6895 (F1 Dropout = 0.7650, F1 Enrolled = 0.4120, F1 Graduate = 0.8440).
+- SVM (RBF Kernel): Accuracy = 75.93%, Macro F1 = 0.6780 (F1 Dropout = 0.7510, F1 Enrolled = 0.3890, F1 Graduate = 0.8380).
+- K-Nearest Neighbors (KNN): Accuracy = 70.28%, Macro F1 = 0.6234 (F1 Dropout = 0.6840, F1 Enrolled = 0.3310, F1 Graduate = 0.7950).
+- Decision Tree (CART): Accuracy = 67.46%, Macro F1 = 0.6015 (F1 Dropout = 0.6520, F1 Enrolled = 0.3640, F1 Graduate = 0.7420).
+
+3. CÁC HỆ SỐ HỒI QUY THỰC TẾ QUAN TRỌNG NHẤT CỦA MÔ HÌNH
+- Yếu tố tăng mạnh nguy cơ Dropout: Chỉ đạt 1 môn HK1 (+2.0049), đạt 2 môn HK1 (+1.6807), đạt 3 môn HK1 (+1.0365).
+- Yếu tố bảo vệ / tăng khả năng Graduate: Điểm trung bình HK1 (+1.3402), đóng học phí đúng hạn (-0.8887 đối với Dropout), ngành học có tỷ lệ hoàn thành cao như Công tác xã hội ngày (+1.1661).
+
+4. KIẾN TRÚC RAG NÂNG CAO TRONG EDUWARN AI
+- Mô hình nhúng (Embedding): bge-m3 đa ngôn ngữ tối ưu xuất sắc cho tiếng Việt.
+- Cơ sở dữ liệu Vector: ChromaDB PersistentClient sử dụng chỉ mục HNSW.
+- Chiến lược truy xuất: Cắt đoạn theo ngữ nghĩa đoạn văn (Paragraph-aware Chunking) kết hợp Hybrid Retrieval (Vector similarity + Keyword boost tiếng Việt).
+- Mô hình ngôn ngữ lớn (LLM): Gemma 4 (12B tham số) chạy cục bộ qua Ollama, hỗ trợ trí nhớ hội thoại đa lượt và cơ chế dự phòng ngoại tuyến (Fallback) khi Ollama chưa bật.

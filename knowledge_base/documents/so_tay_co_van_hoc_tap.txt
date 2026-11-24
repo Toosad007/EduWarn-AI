@@ -1,0 +1,25 @@
+SỔ TAY HƯỚNG DẪN CỐ VẤN HỌC TẬP (ACADEMIC ADVISOR HANDBOOK)
+
+1. VAI TRÒ CỦA CỐ VẤN HỌC TẬP VÀ CÁCH ĐỌC KẾT QUẢ MÔ HÌNH
+- Cố vấn học tập (CVHT) là cầu nối thiết yếu giữa sinh viên, gia đình và Nhà trường.
+- Khi tiếp nhận kết quả dự đoán từ hệ thống EduWarn AI:
+  + Nhóm Graduate (Xác suất > 60%): Sinh viên duy trì tốt năng lực học tập. CVHT khích lệ, hướng dẫn lộ trình học nâng cao, nghiên cứu khoa học hoặc xét học bổng.
+  + Nhóm Enrolled (Xác suất chiếm ưu thế hoặc các chỉ số cân bằng): Sinh viên ở ranh giới cần quan sát. Cần rà soát các môn có điểm dưới trung bình và hỗ trợ kỹ năng quản lý thời gian.
+  + Nhóm Dropout (Xác suất > 40% hoặc đứng đầu): Sinh viên có dấu hiệu khủng hoảng học vụ hoặc khó khăn tài chính. Cần kích hoạt quy trình can thiệp khẩn cấp trong vòng 7 ngày làm việc.
+
+2. QUY TRÌNH TIẾP CẬN VÀ CAN THIỆP SINH VIÊN NGUY CƠ CAO
+- Bước 1 - Rà soát dữ liệu: Xem lại điểm số kỳ 1, số tín chỉ nợ, tình trạng nợ học phí và nghề nghiệp, hoàn cảnh gia đình.
+- Bước 2 - Gửi thông điệp kết nối: Gửi email hoặc tin nhắn với thái độ chân thành, thấu hiểu, không dùng từ ngữ phán xét hay tạo cảm giác sinh viên đang bị kỷ luật.
+- Bước 3 - Buổi gặp gỡ và lắng nghe: Dành 80% thời lượng để lắng nghe sinh viên chia sẻ lý do thực sự (áp lực tâm lý, không hợp ngành, áp lực kinh tế đi làm thêm quá nhiều, mâu thuẫn gia đình).
+- Bước 4 - Lập Kế hoạch Hành động Học tập Cá nhân (ILP - Individual Learning Plan):
+  + Đăng ký lại các môn tiên quyết chưa đạt vào kỳ hè.
+  + Giảm bớt số tín chỉ trong kỳ tiếp theo để giảm tải áp lực.
+  + Kết nối với Trung tâm Hỗ trợ Sinh viên để xin trợ cấp hoặc gia hạn học phí nếu khó khăn tài chính.
+- Bước 5 - Giám sát định kỳ: Hẹn gặp lại sau 4 tuần hoặc sau kỳ thi giữa kỳ để đánh giá chuyển biến.
+
+3. MẪU TIN NHẮN LIÊN LẠC THƯ PHÁP
+- Mẫu 1: Dành cho sinh viên học tốt (Graduate):
+"Chào em, thầy/cô là cố vấn học tập của em. Thầy/cô rất ấn tượng với kết quả học tập xuất sắc của em trong học kỳ 1 vừa qua. Em hãy tiếp tục giữ vững tinh thần này nhé. Nếu em quan tâm đến việc tham gia nghiên cứu khoa học hoặc đăng ký học bổng tài năng, hãy liên hệ thầy/cô để được hướng dẫn thêm!"
+
+- Mẫu 2: Dành cho sinh viên có nguy cơ thôi học (Dropout):
+"Chào [Tên sinh viên], thầy/cô là cố vấn học tập của em. Thầy/cô nhận thấy trong học kỳ vừa qua em đang gặp một số thử thách trong việc hoàn thành các học phần và sắp xếp kế hoạch học tập. Thầy/cô rất mong được gặp gỡ và trò chuyện cùng em tại văn phòng vào [Thời gian] để cùng tìm giải pháp tháo gỡ khó khăn, giúp em an tâm tiếp tục việc học. Em phản hồi lại thầy/cô nhé!"

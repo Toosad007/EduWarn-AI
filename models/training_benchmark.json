@@ -1,0 +1,184 @@
+[
+  {
+    "model": "Logistic Regression (L2, C=0.5)",
+    "cv5_macro_f1": 0.6579,
+    "test_accuracy": 0.7446,
+    "test_macro_f1": 0.6567,
+    "f1_dropout": 0.7712,
+    "f1_enrolled": 0.365,
+    "f1_graduate": 0.834,
+    "confusion_matrix": [
+      [
+        214,
+        30,
+        40
+      ],
+      [
+        38,
+        48,
+        73
+      ],
+      [
+        19,
+        26,
+        397
+      ]
+    ]
+  },
+  {
+    "model": "Logistic Regression (Balanced)",
+    "cv5_macro_f1": 0.6829,
+    "test_accuracy": 0.6994,
+    "test_macro_f1": 0.6604,
+    "f1_dropout": 0.7273,
+    "f1_enrolled": 0.4596,
+    "f1_graduate": 0.7943,
+    "confusion_matrix": [
+      [
+        192,
+        65,
+        27
+      ],
+      [
+        27,
+        91,
+        41
+      ],
+      [
+        25,
+        81,
+        336
+      ]
+    ]
+  },
+  {
+    "model": "HistGradientBoosting",
+    "cv5_macro_f1": 0.6822,
+    "test_accuracy": 0.7288,
+    "test_macro_f1": 0.6517,
+    "f1_dropout": 0.7366,
+    "f1_enrolled": 0.3916,
+    "f1_graduate": 0.8268,
+    "confusion_matrix": [
+      [
+        200,
+        38,
+        46
+      ],
+      [
+        39,
+        56,
+        64
+      ],
+      [
+        20,
+        33,
+        389
+      ]
+    ]
+  },
+  {
+    "model": "Random Forest",
+    "cv5_macro_f1": 0.6117,
+    "test_accuracy": 0.7288,
+    "test_macro_f1": 0.5948,
+    "f1_dropout": 0.7443,
+    "f1_enrolled": 0.2136,
+    "f1_graduate": 0.8265,
+    "confusion_matrix": [
+      [
+        211,
+        15,
+        58
+      ],
+      [
+        52,
+        22,
+        85
+      ],
+      [
+        20,
+        10,
+        412
+      ]
+    ]
+  },
+  {
+    "model": "SVM (RBF Kernel)",
+    "cv5_macro_f1": 0.668,
+    "test_accuracy": 0.7322,
+    "test_macro_f1": 0.6458,
+    "f1_dropout": 0.7444,
+    "f1_enrolled": 0.367,
+    "f1_graduate": 0.826,
+    "confusion_matrix": [
+      [
+        198,
+        33,
+        53
+      ],
+      [
+        35,
+        49,
+        75
+      ],
+      [
+        15,
+        26,
+        401
+      ]
+    ]
+  },
+  {
+    "model": "K-Nearest Neighbors (KNN)",
+    "cv5_macro_f1": 0.5694,
+    "test_accuracy": 0.6723,
+    "test_macro_f1": 0.5579,
+    "f1_dropout": 0.6545,
+    "f1_enrolled": 0.2456,
+    "f1_graduate": 0.7736,
+    "confusion_matrix": [
+      [
+        162,
+        27,
+        95
+      ],
+      [
+        26,
+        28,
+        105
+      ],
+      [
+        23,
+        14,
+        405
+      ]
+    ]
+  },
+  {
+    "model": "Decision Tree (CART)",
+    "cv5_macro_f1": 0.611,
+    "test_accuracy": 0.7073,
+    "test_macro_f1": 0.6325,
+    "f1_dropout": 0.6974,
+    "f1_enrolled": 0.3838,
+    "f1_graduate": 0.8163,
+    "confusion_matrix": [
+      [
+        189,
+        45,
+        50
+      ],
+      [
+        43,
+        57,
+        59
+      ],
+      [
+        26,
+        36,
+        380
+      ]
+    ]
+  }
+]

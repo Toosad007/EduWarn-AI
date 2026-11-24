@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Tổng Quan - Hệ Thống Cảnh Báo Sớm Nguy Cơ Thôi Học{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+    <div class="col-lg-8">
+        <h2 class="fw-bold text-dark mb-2">Hệ Thống Cảnh Báo Nguy Cơ Bỏ Học</h2>
+        <p class="text-secondary mb-0">
+            Ứng dụng trí tuệ nhân tạo và học máy để phân tích thông tin tuyển sinh, kết quả học kỳ 1 và các yếu tố xã hội, hỗ trợ nhà trường sàng lọc và đồng hành sớm cùng sinh viên.
+        </p>
+    </div>
+    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <a href="{{ url_for('predict_single') }}" class="btn btn-primary-custom me-2">
+            <i class="fa-solid fa-user-plus me-1"></i> Bắt đầu dự đoán
+        </a>
+        <a href="{{ url_for('predict_batch_view') }}" class="btn btn-outline-custom">
+            <i class="fa-solid fa-file-import me-1"></i> Nhập file Excel
+        </a>
+    </div>
+</div>
+
+<!-- Thống kê 3 nhóm trạng thái -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card-custom h-100 border-start border-4 border-danger">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-uppercase fw-semibold text-danger small">Nhóm Cảnh Báo</span>
+                <span class="fs-4">⚠️</span>
+            </div>
+            <h4 class="fw-bold mb-1">Dropout (Thôi học)</h4>
+            <p class="text-secondary small mb-0">
+                Sinh viên có dấu hiệu nợ môn cao, nợ học phí hoặc khó khăn cần sự can thiệp và hỗ trợ kịp thời từ cố vấn học tập.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-custom h-100 border-start border-4 border-warning">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-uppercase fw-semibold text-warning small">Nhóm Theo Dõi</span>
+                <span class="fs-4">⏳</span>
+            </div>
+            <h4 class="fw-bold mb-1">Enrolled (Đang theo học)</h4>
+            <p class="text-secondary small mb-0">
+                Sinh viên đang duy trì việc học bình thường, cần theo dõi tiến độ tích lũy học phần ở các kỳ tiếp theo.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-custom h-100 border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-uppercase fw-semibold text-success small">Nhóm Tiến Độ Tốt</span>
+                <span class="fs-4">🎓</span>
+            </div>
+            <h4 class="fw-bold mb-1">Graduate (Tốt nghiệp)</h4>
+            <p class="text-secondary small mb-0">
+                Sinh viên có kết quả học tập kỳ 1 vững vàng, điểm số tốt và lộ trình tiến tới tốt nghiệp đúng hạn.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 4 Phân hệ chính của hệ thống -->
+<h4 class="fw-bold mb-3">Các Phân Hệ Chính</h4>
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card-custom h-100 d-flex flex-column text-center p-4">
+            <div class="mx-auto mb-3" style="width: 56px; height: 56px; background: #eff6ff; color: #2563eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fa-solid fa-user-check"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Dự Đoán Cá Nhân</h5>
+            <p class="text-secondary small flex-grow-1">
+                Nhập hồ sơ chi tiết của một sinh viên, nhận diện tức thì xác suất 3 nhóm và các khuyến nghị can thiệp.
+            </p>
+            <a href="{{ url_for('predict_single') }}" class="btn btn-outline-custom w-100 mt-2">
+                Mở phân hệ <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card-custom h-100 d-flex flex-column text-center p-4">
+            <div class="mx-auto mb-3" style="width: 56px; height: 56px; background: #ecfdf5; color: #059669; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fa-solid fa-file-excel"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Dự Đoán Hàng Loạt</h5>
+            <p class="text-secondary small flex-grow-1">
+                Tải lên danh sách hàng trăm sinh viên qua file Excel hoặc CSV, tự động phân loại và xuất báo cáo kết quả.
+            </p>
+            <a href="{{ url_for('predict_batch_view') }}" class="btn btn-outline-custom w-100 mt-2">
+                Mở phân hệ <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card-custom h-100 d-flex flex-column text-center p-4">
+            <div class="mx-auto mb-3" style="width: 56px; height: 56px; background: #f5f3ff; color: #7c3aed; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Chatbot Cố Vấn AI</h5>
+            <p class="text-secondary small flex-grow-1">
+                Hỏi đáp quy chế đào tạo, thủ tục học vụ và kiến thức đồ án thông qua mô hình ngôn ngữ lớn RAG (Ollama).
+            </p>
+            <a href="{{ url_for('chatbot_view') }}" class="btn btn-outline-custom w-100 mt-2">
+                Mở phân hệ <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card-custom h-100 d-flex flex-column text-center p-4">
+            <div class="mx-auto mb-3" style="width: 56px; height: 56px; background: #fff7ed; color: #ea580c; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Kế Hoạch Can Thiệp</h5>
+            <p class="text-secondary small flex-grow-1">
+                Hệ thống tự động đề xuất lộ trình 3 bước cụ thể kèm mẫu tin nhắn thân mật mời sinh viên lên trao đổi.
+            </p>
+            <a href="{{ url_for('predict_single') }}" class="btn btn-outline-custom w-100 mt-2">
+                Xem chi tiết <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Sơ đồ quy trình hoạt động -->
+<div class="card-custom">
+    <div class="card-title-custom">
+        <i class="fa-solid fa-diagram-project text-primary"></i>
+        <span>Quy Trình Sàng Lọc & Hỗ Trợ Sinh Viên</span>
+    </div>
+    <div class="row text-center mt-3 g-3">
+        <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 h-100">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-2">Bước 1</span>
+                <h6 class="fw-bold mb-1">Thu thập thông tin</h6>
+                <p class="small text-secondary mb-0">Hồ sơ tuyển sinh, tình trạng học phí và kết quả học kỳ 1.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 h-100">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-2">Bước 2</span>
+                <h6 class="fw-bold mb-1">Phân tích Machine Learning</h6>
+                <p class="small text-secondary mb-0">Tiền xử lý và phân loại bằng mô hình Logistic Regression chuẩn hóa.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 h-100">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-2">Bước 3</span>
+                <h6 class="fw-bold mb-1">Đánh giá nguy cơ</h6>
+                <p class="small text-secondary mb-0">Xuất xác suất 3 nhóm và các chỉ số trọng tâm (nợ môn, điểm TB, nợ phí).</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 h-100">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-2">Bước 4</span>
+                <h6 class="fw-bold mb-1">Can thiệp & Đồng hành</h6>
+                <p class="small text-secondary mb-0">Cố vấn học tập chủ động trao đổi và xây dựng lộ trình cải thiện.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+QUY ĐỊNH THI CỬ, CHUYÊN CẦN, HOÃN THI, PHÚC KHẢO VÀ CÁCH TÍNH ĐIỂM GPA / CPA
+
+1. ĐIỀU KIỆN DỰ THI KẾT THÚC HỌC PHẦN (CHUYÊN CẦN)
+- Sinh viên phải tham dự tối thiểu 80% tổng số tiết học trên lớp (tức không được vắng quá 20% số buổi học của môn đó, bất kể có phép hay không phép trừ trường hợp bất khả kháng được Khoa phê duyệt).
+- Sinh viên vắng quá 20% số buổi sẽ bị cấm thi cuối kỳ và nhận điểm 0 (điểm F), bắt buộc phải đăng ký học lại học phần đó.
+
+2. THỦ TỤC XIN HOÃN THI / THI BỔ SUNG KHI ỐM ĐAU HOẶC SỰ CỐ ĐỘT XUẤT
+- Nếu sinh viên bị ốm nặng, tai nạn, hoặc gia đình có việc hiếu đúng ngày thi:
+  + KHÔNG tự ý bỏ thi không báo (vì bỏ thi không lý do sẽ bị tính điểm 0/F ngay).
+  + Cần báo ngay cho Giảng viên hoặc Văn phòng Khoa trước hoặc trong vòng 24–48 giờ sau buổi thi.
+  + Nộp "Đơn xin hoãn thi / thi bổ sung" kèm giấy xác nhận của bệnh viện/cơ sở y tế có dấu đỏ tại Phòng Đào tạo (thường trong vòng 3–5 ngày làm việc) để được bảo lưu điểm quá trình và bố trí thi ở đợt thi phụ.
+
+3. THỦ TỤC PHÚC KHẢO BÀI THI
+- Nếu nghi ngờ điểm thi cuối kỳ có sai sót trong quá trình chấm hoặc nhập điểm:
+  + Sinh viên làm Đơn xin phúc khảo bài thi nộp tại Phòng Khảo thí / Phòng Đào tạo trong vòng 7–15 ngày kể từ ngày công bố điểm chính thức.
+  + Kết quả phúc khảo thường có sau 7–14 ngày làm việc; điểm sau phúc khảo sẽ là điểm chính thức cuối cùng của học phần.
+
+4. XỬ LÝ VI PHẠM QUY CHẾ THI CỬ
+- Khiển trách (nhìn bài, trao đổi bài lần 1): Trừ 25% số điểm bài thi.
+- Cảnh cáo (tái phạm hoặc trao đổi giấy nháp): Trừ 50% số điểm bài thi.
+- Đình chỉ thi (mang tài liệu trái phép, dùng điện thoại/thiết bị gian lận, thi hộ): Nhận điểm 0 môn đó và bị hạ bậc Điểm rèn luyện, đồng thời không được xét học bổng khuyến khích trong học kỳ.
+
+5. BẢNG QUY ĐỔI ĐIỂM CHỮ, THANG 10, THANG 4.0 VÀ CÁCH TÍNH GPA / CPA
+Quy đổi chuẩn phổ biến tại đại học Việt Nam:
+- 8.5 – 10.0 (thang 10) = Điểm A  = 4.0 (thang 4)
+- 8.0 – 8.4  (thang 10) = Điểm B+ = 3.5 (thang 4)
+- 7.0 – 7.9  (thang 10) = Điểm B  = 3.0 (thang 4)
+- 6.5 – 6.9  (thang 10) = Điểm C+ = 2.5 (thang 4)
+- 5.5 – 6.4  (thang 10) = Điểm C  = 2.0 (thang 4)
+- 5.0 – 5.4  (thang 10) = Điểm D+ = 1.5 (thang 4)
+- 4.0 – 4.9  (thang 10) = Điểm D  = 1.0 (thang 4) — Đạt mức tối thiểu
+- Dưới 4.0   (thang 10) = Điểm F  = 0.0 (thang 4) — Không đạt, phải học lại
+
+Công thức tính điểm trung bình học kỳ (GPA) và tích lũy (CPA):
+- GPA = Tổng (Điểm hệ 4 của từng môn x Số tín chỉ của môn đó) / Tổng số tín chỉ đã đăng ký trong học kỳ.
+- Ví dụ minh họa: Kỳ 1 học 3 môn: Môn 1 (3 tín chỉ, điểm B = 3.0), Môn 2 (4 tín chỉ, điểm C = 2.0), Môn 3 (3 tín chỉ, điểm A = 4.0).
+  GPA = (3 x 3.0 + 4 x 2.0 + 3 x 4.0) / (3 + 4 + 3) = (9 + 8 + 12) / 10 = 2.90 / 4.0 (Loại Khá).
+- Mẹo nâng CPA nhanh: Ưu tiên học cải thiện các môn có số tín chỉ lớn (3–4 tín chỉ) đang bị điểm D hoặc C vì hệ số tín chỉ càng cao thì tác động kéo CPA lên càng mạnh.

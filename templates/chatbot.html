@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Chatbot AI Cố Vấn - EduWarn AI{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h3 class="fw-bold text-dark mb-1">Trợ Lý AI Cố Vấn Học Vụ</h3>
+        <p class="text-secondary mb-0">
+            Hỏi đáp thông minh về quy chế đào tạo, tư vấn phương pháp học tập, trả nợ môn, học bổng và giải đáp kiến thức đồ án.
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card-custom d-flex flex-column mb-3" style="min-height: 75vh; padding: 0;">
+            <!-- Chat Header -->
+            <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-white rounded-top">
+                <div class="d-flex align-items-center">
+                    <div class="me-2" style="width: 40px; height: 40px; background: #eff6ff; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-dark">Trợ Lý EduWarn AI</div>
+                        <div class="text-success small" style="font-size: 0.78rem;">
+                            <i class="fa-solid fa-circle me-1" style="font-size: 0.5rem;"></i>Sẵn sàng hỗ trợ học vụ &amp; tư vấn học tập
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-light text-secondary" id="btnClearChat" title="Xóa lịch sử trò chuyện">
+                    <i class="fa-regular fa-trash-can me-1"></i>Làm mới
+                </button>
+            </div>
+
+            <!-- Chat Messages Body (Tự mở rộng toàn bộ nội dung, không bó khung hẹp) -->
+            <div id="chatMessages" class="p-4 flex-grow-1 bg-light" style="min-height: 460px; gap: 1.15rem; display: flex; flex-direction: column;">
+                <div class="d-flex align-items-start gap-2">
+                    <div style="width: 34px; height: 34px; background: #2563eb; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0;">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="p-3 bg-white rounded-3 shadow-sm border text-dark" style="max-width: 92%; font-size: 0.94rem;">
+                        Xin chào! Tôi là <strong>Trợ lý AI Cố vấn Học vụ EduWarn AI</strong>. Bạn có thể hỏi tôi về kế hoạch trả nợ môn, phương pháp học tập, quản lý thời gian khi đi làm thêm, quy chế cảnh báo học vụ, học bổng, hoặc kiến thức về đồ án.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gợi ý câu hỏi nhanh + Ô nhập (dính đáy màn hình để tiện hỏi tiếp) -->
+            <div class="bg-white border-top rounded-bottom" style="position: sticky; bottom: 0; z-index: 10;">
+                <div class="px-3 py-2 border-bottom">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="small fw-bold text-secondary" style="font-size: 0.76rem;">
+                            <i class="fa-solid fa-lightbulb text-warning me-1"></i> Gợi ý câu hỏi nhanh:
+                        </span>
+                        <span class="badge bg-light text-secondary border small" style="font-size: 0.7rem;">Bấm để hỏi ngay</span>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap py-1">
+                        <button class="btn btn-sm btn-outline-primary rounded-pill quick-ask py-1 px-2" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-book-open-reader me-1"></i> Bị nợ 3 môn kỳ 1 nên lập kế hoạch học lại thế nào?
+                        </button>
+                        <button class="btn btn-sm btn-outline-success rounded-pill quick-ask py-1 px-2" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-clock me-1"></i> Cách quản lý thời gian cho sinh viên vừa học vừa làm thêm?
+                        </button>
+                        <button class="btn btn-sm btn-outline-info rounded-pill quick-ask py-1 px-2 text-dark" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-calculator me-1 text-info"></i> Quy đổi thang điểm 20 sang thang 10 và thang 4?
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning rounded-pill quick-ask py-1 px-2 text-dark" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i> Quy định các mức cảnh báo học vụ?
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill quick-ask py-1 px-2" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-filter me-1"></i> Vì sao đồ án loại bỏ dữ liệu học kỳ 2?
+                        </button>
+                        <button class="btn btn-sm btn-outline-success rounded-pill quick-ask py-1 px-2" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-award me-1"></i> Chính sách học bổng khuyến khích &amp; cách nâng GPA?
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill quick-ask py-1 px-2" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-wallet me-1"></i> Cách xử lý khi sinh viên nợ học phí?
+                        </button>
+                        <button class="btn btn-sm btn-outline-dark rounded-pill quick-ask py-1 px-2" style="font-size: 0.75rem;">
+                            <i class="fa-solid fa-compass me-1"></i> Chán ngành học nên chuyển ngành hay bảo lưu?
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Input Footer -->
+                <div class="p-3">
+                    <form id="chatForm" class="d-flex gap-2">
+                        <input type="text" id="chatInput" class="form-control" placeholder="Nhập câu hỏi của bạn tại đây..." autocomplete="off" required>
+                        <button type="submit" class="btn btn-primary-custom px-4" id="btnSend">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const chatMessages = document.getElementById('chatMessages');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const btnSend = document.getElementById('btnSend');
+let chatHistory = [];
+
+// Nút hỏi nhanh
+document.querySelectorAll('.quick-ask').forEach(btn => {
+    btn.addEventListener('click', function() {
+        chatInput.value = this.innerText.trim();
+        chatForm.dispatchEvent(new Event('submit'));
+    });
+});
+
+chatForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    appendUserMessage(message);
+    chatInput.value = '';
+    btnSend.disabled = true;
+
+    const botMsgId = 'botMsg_' + Date.now();
+    appendBotPlaceholder(botMsgId);
+
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                message: message,
+                history: chatHistory.slice(-6)
+            })
+        });
+        const res = await response.json();
+        btnSend.disabled = false;
+
+        const placeholder = document.getElementById(botMsgId);
+        if (res.status === 'success') {
+            chatHistory.push({role: 'user', content: message});
+            chatHistory.push({role: 'assistant', content: res.answer});
+            const formattedAnswer = typeof marked !== 'undefined' ? marked.parse(res.answer) : res.answer.replace(/\n/g, '<br>');
+            placeholder.innerHTML = `<div class="markdown-rendered">${formattedAnswer}</div>`;
+        } else {
+            placeholder.innerHTML = `<span class="text-danger">Lỗi: ${res.message}</span>`;
+        }
+    } catch (err) {
+        btnSend.disabled = false;
+        const placeholder = document.getElementById(botMsgId);
+        placeholder.innerHTML = `<span class="text-danger">Lỗi kết nối: ${err.message}</span>`;
+    }
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+});
+
+function appendUserMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'd-flex justify-content-end';
+    div.innerHTML = `
+        <div class="p-3 bg-primary text-white rounded-3 shadow-sm" style="max-width: 85%; font-size: 0.94rem;">
+            ${text}
+        </div>
+    `;
+    chatMessages.appendChild(div);
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function appendBotPlaceholder(id) {
+    const div = document.createElement('div');
+    div.className = 'd-flex align-items-start gap-2';
+    div.innerHTML = `
+        <div style="width: 34px; height: 34px; background: #2563eb; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0;">
+            <i class="fa-solid fa-robot"></i>
+        </div>
+        <div id="${id}" class="p-3 bg-white rounded-3 shadow-sm border text-dark" style="max-width: 92%; font-size: 0.94rem;">
+            <div class="spinner-grow spinner-grow-sm text-primary me-1" role="status"></div>
+            <span class="text-muted">Đang phân tích và trả lời...</span>
+        </div>
+    `;
+    chatMessages.appendChild(div);
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+document.getElementById('btnClearChat').addEventListener('click', () => {
+    if (confirm('Bạn có muốn xóa lịch sử cuộc trò chuyện này?')) {
+        chatHistory = [];
+        chatMessages.innerHTML = `
+            <div class="d-flex align-items-start gap-2">
+                <div style="width: 34px; height: 34px; background: #2563eb; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0;">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="p-3 bg-white rounded-3 shadow-sm border text-dark" style="max-width: 92%; font-size: 0.94rem;">
+                    Lịch sử chat đã được làm mới. Hãy nhập câu hỏi bạn cần giải đáp!
+                </div>
+            </div>
+        `;
+    }
+});
+</script>
+{% endblock %}

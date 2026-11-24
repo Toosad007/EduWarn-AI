@@ -1,0 +1,44 @@
+TÊN ĐỀ TÀI:
+Xây dựng hệ thống cảnh báo sớm nguy cơ bỏ học của sinh viên sử dụng Machine Learning và Trợ lý AI Cố vấn Học vụ (EduWarn AI).
+
+1. TỔNG QUAN VÀ MỤC TIÊU ĐỀ TÀI
+- Đề tài tập trung giải quyết bài toán phát hiện sớm nguy cơ thôi học (Dropout) của sinh viên ngay sau học kỳ 1 năm thứ nhất.
+- Hỗ trợ Phòng Đào tạo, Ban Cố vấn học tập và Khoa có đầy đủ thông tin định lượng để chủ động can thiệp, tư vấn và giúp đỡ kịp thời trước khi quá muộn.
+- Tích hợp Trợ lý Trí tuệ Nhân tạo (RAG Chatbot) đóng vai trò Chuyên gia Cố vấn học vụ, diễn giải kết quả phân tích và tự động soạn thảo mẫu thư mời trao đổi phù hợp với từng hoàn cảnh sinh viên.
+
+2. BỘ DỮ LIỆU HUẤN LUYỆN (DATASET)
+- Bộ dữ liệu: "Predict Students' Dropout and Academic Success" từ kho lưu trữ dữ liệu học máy uy tín UCI Machine Learning Repository (nguồn gốc từ một cơ sở giáo dục đại học tại Bồ Đào Nha).
+- Quy mô: Gồm 4,424 hồ sơ sinh viên với 37 thuộc tính bao gồm:
+  + Nhân khẩu học & gia đình: Giới tính, Tuổi khi nhập học, Tình trạng hôn nhân, Quốc tịch, Học vấn và nghề nghiệp của cha mẹ, Sinh viên thuộc diện di dời, Nhu cầu giáo dục đặc biệt.
+  + Điều kiện kinh tế - xã hội: Tình trạng nợ học phí (Debtor), Đã hoàn thành học phí đúng hạn (Tuition fees up to date), Sinh viên quốc tế, Có học bổng (Scholarship holder).
+  + Quá trình tuyển sinh: Hình thức xét tuyển, Thứ tự nguyện vọng, Ngành học, Hình thức đào tạo (Ngày/Tối), Trình độ học vấn trước đó.
+  + Kết quả học tập: Số tín chỉ đăng ký, số tín chỉ được công nhận, số tín chỉ đạt, số tín chỉ đánh giá, điểm trung bình các học phần (theo thang điểm 20 của Bồ Đào Nha).
+- Ba nhóm phân loại của nhãn mục tiêu (Target):
+  + Dropout (Sinh viên thôi học / bỏ học).
+  + Enrolled (Sinh viên đang duy trì học tập bình thường).
+  + Graduate (Sinh viên tốt nghiệp thành công).
+
+3. TIỀN XỬ LÝ DỮ LIỆU VÀ KỸ THUẬT ĐẶC TRƯNG
+- QUYẾT ĐỊNH QUAN TRỌNG VỀ DỮ LIỆU: Loại bỏ toàn bộ các thuộc tính thuộc Học kỳ 2 (Curricular units 2nd sem).
+  + Lý do cốt lõi: Tránh hiện tượng rò rỉ dữ liệu tương lai (Data Leakage). Hệ thống đặt mục tiêu cảnh báo sớm ngay khi sinh viên vừa kết thúc Học kỳ 1. Nếu đưa dữ liệu Học kỳ 2 vào, mô hình sẽ không thể áp dụng thực tế vào thời điểm giữa năm nhất để giải cứu sinh viên kịp thời.
+- Mã hóa dữ liệu phân loại: Áp dụng One-Hot Encoding cho các biến danh mục đa lớp.
+- Chuẩn hóa dữ liệu số: Áp dụng StandardScaler để đưa các biến liên tục (như điểm số, độ tuổi, tín chỉ) về cùng thang đo chuẩn (mean = 0, std = 1).
+
+4. MÔ HÌNH HỌC MÁY VÀ ĐÁNH GIÁ HIỆU NĂNG
+- Các thuật toán đã thử nghiệm và so sánh:
+  + Logistic Regression (Mô hình được chọn triển khai chính thức).
+  + Random Forest Classifier.
+  + Support Vector Machine (SVM).
+  + Decision Tree.
+  + K-Nearest Neighbors (KNN).
+- Lý do chọn Logistic Regression:
+  + Cung cấp xác suất dự đoán rõ ràng và tin cậy cho từng lớp kết quả (Dropout, Enrolled, Graduate).
+  + Tính giải thích cao (Explainability), giúp cán bộ cố vấn hiểu rõ trọng số và mức độ ảnh hưởng của từng yếu tố rủi ro.
+  + Hoạt động ổn định, tốc độ suy luận tức thì và không bị hiện tượng quá khớp (Overfitting).
+- Thước đo đánh giá chính: Accuracy (~77%) và Macro F1-Score (~0.70). Ưu tiên Macro F1 vì phân phối giữa các lớp có sự mất cân bằng.
+
+5. NỀN TẢNG CÔNG NGHỆ VÀ TÍNH NĂNG ỨNG DỤNG
+- Backend & Giao diện: Xây dựng hoàn chỉnh trên nền tảng Flask (Python), giao diện HTML5/CSS3 hiện đại, thân thiện, tương thích đa thiết bị.
+- Dự đoán cá nhân: Nhập hồ sơ chi tiết, dự đoán 3 mức xác suất và tự động sinh bản tư vấn học vụ chuyên sâu.
+- Dự đoán hàng loạt: Tải file Excel/CSV, dự đoán hàng trăm hồ sơ cùng lúc và trích xuất báo cáo kết quả phân loại ra file Excel chuyên nghiệp.
+- Trợ lý Cố vấn RAG Chatbot: Tích hợp ChromaDB lưu trữ vector và Ollama LLM (Qwen2.5 3B), hỗ trợ tra cứu quy chế, giải thích mô hình và tư vấn sư phạm chuẩn mực.
